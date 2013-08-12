@@ -1,7 +1,7 @@
 var Media = {
 
 	init: function () {
-		Crafty.sprite(Config.tile.size, Media.spriteFilepath("original","textures","dirt1.png"), {
+		Crafty.sprite(Config.tile.size, Media.spriteFilepath("original","blocks","dirt1.png"), {
 			grass: [0,0,1,1],
 			stone: [1,0,1,1]
 		});
@@ -61,7 +61,7 @@ var Media = {
 		character: Config.filepath.characters,
 		mob: Config.filepath.mobs,
 		object: Config.filepath.objects,
-		texture: Config.filepath.textures,
+		block: Config.filepath.blocks,
 	},
 
 	spriteFilepath: function (spritepack, type, name) {

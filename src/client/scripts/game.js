@@ -19,7 +19,7 @@ var Game = {
 
 	preload: function() {
 		Crafty.scene("Loading"); //go to main scene
-		Crafty.load([Media.spriteFilepath("original","textures","dirt1.png")],
+		Crafty.load([Media.spriteFilepath("original","blocks","dirt1.png")],
 			function() {
 				//when loaded
 				Media.init();

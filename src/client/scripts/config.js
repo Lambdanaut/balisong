@@ -20,7 +20,7 @@ var Config = {
 			mobs: "mobs",
 			characters: "characters",
 			objects: "objects",
-			textures: "textures",
+			blocks: "blocks",
 		},
 		ui: "resources/img/ui",
 	},
