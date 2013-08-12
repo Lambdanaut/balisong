@@ -27,8 +27,9 @@ var Config = {
 
 	// Dimensions of isometric game tiles
 	tile: {
-		width: 96,
-		length: 96,
-		height: 96,
+		width: 94,
+		length: 94,
+		height: 94,
+		size: 94,
 	},
 };

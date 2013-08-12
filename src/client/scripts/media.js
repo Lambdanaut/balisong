@@ -1,12 +1,12 @@
 var Media = {
 
 	init: function () {
-		Crafty.sprite(128, Media.spriteFilepath("original","textures","dirt1.png"), {
+		Crafty.sprite(Config.tile.size, Media.spriteFilepath("original","textures","dirt1.png"), {
 			grass: [0,0,1,1],
 			stone: [1,0,1,1]
 		});
 
-		iso = Crafty.isometric.size(96);
+		iso = Crafty.isometric.init(Config.tile.size);
 		var z = 0;
 		for(var i = 20; i >= 0; i--) {
 			for(var y = 0; y < 20; y++) {
