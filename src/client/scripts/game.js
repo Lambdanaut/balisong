@@ -1,25 +1,16 @@
 var Game = {
 	// This defines our grid's size and the size of each of its tiles
-	mapGrid: {
-		width:	35,
-		height: 25,
-		tile: {
-			width:	16,
-			height: 16
-		}
-	},
- 
 	width: function() {
-		return this.mapGrid.width * this.mapGrid.tile.width;
+		return Config.canvas.w * Config.tile.w;
 	},
  
 	height: function() {
-		return this.mapGrid.height * this.mapGrid.tile.height;
+		return Config.canvas.h * Config.tile.h;
 	},
 
 	preload: function() {
 		Crafty.scene("Loading"); //go to main scene
-		Crafty.load([Media.spriteFilepath("original","blocks","dirt1.png")],
+		Crafty.load([Media.spriteFilepath("original","blocks","grass_01.png")],
 			function() {
 				//when loaded
 				Media.init();
@@ -40,7 +31,11 @@ var Game = {
  
 	// Initialize and start our game
 	start: function() {
-		Crafty.init();
+		Crafty.init(Config.canvas.w, Config.canvas.h);
+
+		Crafty.viewport.clampToEntities = !Config.development;
+		Crafty.viewport.mouselook(Config.development);
+		
 
 		Game.preload();
 	}

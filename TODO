@@ -2,14 +2,11 @@
 
 ## Graphics
 
+* Sprite Loader
 * Rotatable isomorphic display
 * Shadow
 
 
 ## FOR DISCUSSION
-
-* Character movement?
- * WASD/Arrow Keys
- * Point and click (Ragnarok style)
 
 * Mobile version

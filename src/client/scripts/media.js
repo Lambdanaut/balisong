@@ -1,61 +1,36 @@
 var Media = {
 
 	init: function () {
-		Crafty.sprite(Config.tile.size, Media.spriteFilepath("original","blocks","dirt1.png"), {
-			grass: [0,0,1,1],
-			stone: [1,0,1,1]
+		Crafty.sprite(Config.tile.s, Media.spriteFilepath("original","blocks","grass_01.png"), {
+			Grass: [0,0,1,1],
 		});
 
-		iso = Crafty.isometric.init(Config.tile.size);
+		iso = Crafty.isometric.size(Config.tile.s);
 		var z = 0;
-		for(var i = 20; i >= 0; i--) {
+		for(var x = 20; x >= 0; x--) {
 			for(var y = 0; y < 20; y++) {
 				var which = Math.round(Math.random());
-				var tile = Crafty.e("2D, DOM, "+ (which ? "grass" : "stone") +", Mouse")
-				.attr('z',i+1 * y+1).areaMap([48,0],[96,24],[96,72],[48,96],[0,72],[0,24]).bind("click", function(e) {
+				var tile = Crafty.e("2D, Canvas, Mouse, Grass")
+				.attr('z', x+1 * y+1)
+				.areaMap([48,0],[96,24],[96,72],[48,96],[0,72],[0,24])
+				.bind("MouseUp", function(e) {
 					//destroy on right click
-					if(e.button === 2) this.destroy();
-				}).bind("mouseover", function() {
-					if(this.has("grass")) {
-						this.sprite(0,1,1,1);
-					} else {
-						this.sprite(1,1,1,1);
-					}
-				}).bind("mouseout", function() {
-					if(this.has("grass")) {
-						this.sprite(0,0,1,1);
-					} else {
-						this.sprite(1,0,1,1);
-					}
+					if (e.mouseButton === Crafty.mouseButtons.RIGHT) this.destroy();
 				});
-				
-				iso.place(i,y,0, tile);
+
+				iso.place(x, y, which, tile);
+
 			}
 		}
-		
-		Crafty.addEvent(this, Crafty.stage.elem, "mousedown", function(e) {
-			if(e.button > 1) return;
-			var base = {x: e.clientX, y: e.clientY};
-
-			function scroll(e) {
-				var dx = base.x - e.clientX,
-					dy = base.y - e.clientY;
-					base = {x: e.clientX, y: e.clientY};
-				Crafty.viewport.x -= dx;
-				Crafty.viewport.y -= dy;
-			};
-
-			Crafty.addEvent(this, Crafty.stage.elem, "mousemove", scroll);
-			Crafty.addEvent(this, Crafty.stage.elem, "mouseup", function() {
-				Crafty.removeEvent(this, Crafty.stage.elem, "mousemove", scroll);
-			});
+		tile.bind('EnterFrame', function () {
+			tile.x -= 1;
 		});
+		Crafty.viewport.follow(tile,0,0);
 	},
 
 	preload: function (files) {
 
 	},
-
 
 	filepathMapping: {
 		character: Config.filepath.characters,

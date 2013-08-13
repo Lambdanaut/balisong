@@ -1,8 +1,9 @@
 //
-// Client configuration
+// Client default configuration
 //
 
 var Config = {
+	development: true,
 
 	network: {
 		// The server's IP address or domain name
@@ -25,11 +26,17 @@ var Config = {
 		ui: "resources/img/ui",
 	},
 
+	// Canvas Size
+	canvas: {
+		w: 768,
+		h: 518,
+	},
+
 	// Dimensions of isometric game tiles
 	tile: {
-		width: 94,
-		length: 94,
-		height: 94,
-		size: 94,
+		w: 96,
+		l: 96,
+		h: 96,
+		s: 96,
 	},
 };
