@@ -1,0 +1,14 @@
+# NOTES
+
+## Client Startup Process
+
+1. Open a connection to the server
+2. Preload login interface
+3. Display login interface
+4. Accept login credentials
+5. Download account settings
+6. Apply account settings
+7. Download map meta-data
+8. Preload map graphics
+9. Create entities for all downloaded actors
+10. Display map entities
