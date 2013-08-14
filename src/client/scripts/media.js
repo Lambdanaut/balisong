@@ -28,21 +28,37 @@ var Media = {
 		Crafty.viewport.follow(tile,0,0);
 	},
 
-	preload: function (files) {
+	preload: function(files) {
+		Crafty.load([Media.spriteFilepath("original","blocks","grass_01.png")],
+			function() {
+				//when loaded
+				Media.init();
 
+				// Crafty.scene("main"); //go to main scene
+				// Crafty.audio.play("loaded.ogg"); //Play the loaded sound effect
+			},
+
+			function(e) {
+				//progress
+			},
+
+			function(e) {
+				//uh oh, error loading
+			}
+		);
 	},
 
-	filepathMapping: {
-		character: Config.filepath.characters,
-		mob: Config.filepath.mobs,
-		object: Config.filepath.objects,
-		block: Config.filepath.blocks,
-	},
+	// filepathMapping: {
+	// 	character: Config.filepath.characters,
+	// 	mob: Config.filepath.mobs,
+	// 	object: Config.filepath.objects,
+	// 	block: Config.filepath.blocks,
+	// },
 
-	spriteFilepath: function (spritepack, type, name) {
-		var type_path = Media.filepathMapping;
+	// spriteFilepath: function (spritepack, type, name) {
+	// 	var type_path = Media.filepathMapping;
 
-		return Config.filepath.sprites.path + "/" + spritepack + "/" + type + "/" + name;
-	},
+	// 	return Config.filepath.sprites.path + "/" + spritepack + "/" + type + "/" + name;
+	// },
 
 }

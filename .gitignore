@@ -1,4 +1,4 @@
-src/lib-cov
+src/server/lib-cov
 *.seed
 *.log
 *.csv
@@ -7,12 +7,12 @@ src/lib-cov
 *.pid
 *.gz
 
-src/pids
-src/logs
-src/results
+src/server/pids
+src/server/logs
+src/server/results
 
-src/npm-debug.log
-src/node_modules
+src/server/npm-debug.log
+src/server/node_modules
 
 *.swp
 *.swo

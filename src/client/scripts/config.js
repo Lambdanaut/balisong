@@ -10,22 +10,6 @@ var Config = {
 		host: "http://localhost",
 	},
 
-	// Filepaths
-	filepath: {
-		resources: "resources",
-		images: "resources/img",
-		sprites: {
-			path: "resources/img/sprites",
-
-			// Paths relative to the sprites path
-			mobs: "mobs",
-			characters: "characters",
-			objects: "objects",
-			blocks: "blocks",
-		},
-		ui: "resources/img/ui",
-	},
-
 	// Canvas Size
 	canvas: {
 		w: 768,
