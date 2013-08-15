@@ -1,0 +1,17 @@
+{
+	"name": "balisong",
+	"description": "The server for the Balisong oRPG engine",
+	"author": {
+		"name": "Josh Thomas"
+	},
+	"version": "0.0.1",
+	"devDependencies": {
+		"async": ">=0.2.9",
+		"socket.io": ">=0.9.16"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://Lambdanaut@bitbucket.org/Lambdanaut/balisong.git"
+	},
+	"_id": "balisong@0.0.1"
+}

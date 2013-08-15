@@ -1,8 +1,15 @@
 // External Libs
 var fs = require('fs');
 
-exports.getUI = function (callback) {
-	fs.readdir
+// Server Libs
+var config = require('./config.json').config;
+
+
+
+exports.spriteFilepath = function (spritepack, type, name) {
+	return Config.filepath.sprites.path + "/" + spritepack + "/" + type + "/" + name;
 }
 
-fs.readdir
+exports.uiURLs = function (x, callback) {
+	fs.readdir();
+}

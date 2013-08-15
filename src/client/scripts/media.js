@@ -55,10 +55,4 @@ var Media = {
 	// 	block: Config.filepath.blocks,
 	// },
 
-	// spriteFilepath: function (spritepack, type, name) {
-	// 	var type_path = Media.filepathMapping;
-
-	// 	return Config.filepath.sprites.path + "/" + spritepack + "/" + type + "/" + name;
-	// },
-
 }

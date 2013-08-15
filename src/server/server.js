@@ -1,13 +1,20 @@
 // External Libs
 var   app = require('http').createServer(handler)
 	, io = require('socket.io').listen(app)
+	, async = require('async')
 	, crypto = require('crypto')
-	, util = require('util')
+	, fs = require('fs')
+	, util = require('util');
+
 
 // Server Libs
-var	  config = require('./scripts/config.js')
+var	  config = require('./scripts/config.json').config
 	, components = require('./scripts/components.js')
-	, resources = require('./scripts/resources.js')
+	, resources = require('./scripts/resources.js');
+
+
+// Individual Game File
+var	game = require('./' + config.filepath.resources + '/game.json').game;
 	
 
 //
@@ -36,7 +43,10 @@ io.sockets.on('connection', function (client) {
 	var sessionId = client.sessionId;
 
 	// Send back login screen resource URLs
-	// fs.readdir();
+	fs.readdir('./' + config.filepath.ui + '/' + game.loginUI, function (err, files) {
+		console.log(files);
+	});
+
 
 
 	// client.join('room');

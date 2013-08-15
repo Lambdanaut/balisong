@@ -1,0 +1,20 @@
+{
+	"config" : {
+		"development": true,
+
+		"filepath": {
+			"resources": "resources",
+			"audio": "resources/audio",
+			"images": "resources/img",
+			"sprites": {
+				"path": "resources/img/sprites",
+
+				"mobs": "mobs",
+				"characters": "characters",
+				"objects": "objects",
+				"blocks": "blocks"
+			},
+			"ui": "resources/img/ui"
+		}
+	}
+}
