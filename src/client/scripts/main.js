@@ -16,16 +16,17 @@ var Game = {
 		Crafty.init(Config.canvas.w, Config.canvas.h);
 		//Add Canvas Element
 		Crafty.canvas.init();
-		//Set canvas under interface
+		//Set canvas under user interface
 		Crafty.canvas._canvas.style.zIndex = '1';
 
 		// Apply configurations
 		Crafty.viewport.clampToEntities = !Config.development;
 		Crafty.viewport.mouselook(Config.development);
 		
-		// Setup networking
+		// Bootup and connecting loading screen
 		Crafty.scene("Loading--Boot");
-		Net.setup();
 
+		// Setup networking
+		Net.setup();
 	}
 }

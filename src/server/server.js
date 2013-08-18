@@ -51,7 +51,7 @@ io.sockets.on('connection', function (client) {
 
 	var sessionId = client.sessionId;
 
-	client.emit('urls--login-ui', ui);
+	client.emit('urls--ui', ui);
 
 	// client.join('room');
 

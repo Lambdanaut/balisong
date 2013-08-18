@@ -1,7 +1,6 @@
 var Media = {
 
 	init: function () {
-		Crafty.scene("Overworld");
 		Crafty.sprite(Config.tile.s, "https://www.google.com/images/srpr/logo4w.png", {
 			Grass: [0,0,1,1],
 		});
@@ -27,26 +26,6 @@ var Media = {
 			tile.x -= 1;
 		});
 		Crafty.viewport.follow(tile,0,0);
-	},
-
-	loginScreen: function(loginMediaURLs) {
-		Crafty.load(loginMediaURLs,
-			function() {
-				//when loaded
-				console.log(Crafty.canvas);
-
-				// Crafty.scene("main"); //go to main scene
-				// Crafty.audio.play("loaded.ogg"); //Play the loaded sound effect
-			},
-
-			function(e) {
-				//progress
-			},
-
-			function(e) {
-				//uh oh, error loading
-			}
-		);
 	},
 
 }

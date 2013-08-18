@@ -32,10 +32,6 @@ Crafty.c('Block', {
 	},
 });
 
-function build_block () {
-	
-}
-
 Crafty.c('Character', {
 	init: function() {
 		this.requires('Actor, Solid')
