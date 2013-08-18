@@ -1,6 +1,6 @@
 {
 	"game" : {
 		"title" : "Demo Game",
-		"loginUI" : "original"
+		"ui" : "original"
 	}
 }

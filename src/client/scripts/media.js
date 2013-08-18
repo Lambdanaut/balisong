@@ -1,7 +1,8 @@
 var Media = {
 
 	init: function () {
-		Crafty.sprite(Config.tile.s, Media.spriteFilepath("original","blocks","grass_01.png"), {
+		Crafty.scene("Overworld");
+		Crafty.sprite(Config.tile.s, "https://www.google.com/images/srpr/logo4w.png", {
 			Grass: [0,0,1,1],
 		});
 
@@ -28,11 +29,11 @@ var Media = {
 		Crafty.viewport.follow(tile,0,0);
 	},
 
-	preload: function(files) {
-		Crafty.load([Media.spriteFilepath("original","blocks","grass_01.png")],
+	loginScreen: function(loginMediaURLs) {
+		Crafty.load(loginMediaURLs,
 			function() {
 				//when loaded
-				Media.init();
+				console.log(Crafty.canvas);
 
 				// Crafty.scene("main"); //go to main scene
 				// Crafty.audio.play("loaded.ogg"); //Play the loaded sound effect
@@ -47,12 +48,5 @@ var Media = {
 			}
 		);
 	},
-
-	// filepathMapping: {
-	// 	character: Config.filepath.characters,
-	// 	mob: Config.filepath.mobs,
-	// 	object: Config.filepath.objects,
-	// 	block: Config.filepath.blocks,
-	// },
 
 }

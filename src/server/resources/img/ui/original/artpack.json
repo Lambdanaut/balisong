@@ -1,0 +1,9 @@
+{
+	"artpack" : {
+		"title": "original",
+		"type": "ui",
+		"files": {
+			"loadingBackground": "loadingBackground.jpg"
+		}
+	}
+}

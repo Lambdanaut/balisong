@@ -1,21 +1,30 @@
-// External Libs
+// Node Standard Libs
 var   app = require('http').createServer(handler)
-	, io = require('socket.io').listen(app)
-	, async = require('async')
 	, crypto = require('crypto')
+	, path = require('path')
 	, fs = require('fs')
 	, util = require('util');
 
+// External Libs
+var   io = require('socket.io').listen(app)
+	, async = require('async');
 
 // Server Libs
 var	  config = require('./scripts/config.json').config
 	, components = require('./scripts/components.js')
 	, resources = require('./scripts/resources.js');
 
+//
+// Resource Storage
+//
+var Storage = new resources.storageMap[config.storage]();
 
-// Individual Game File
+// Game File
 var	game = require('./' + config.filepath.resources + '/game.json').game;
-	
+
+// UI
+var ui = Storage.getArtPackFiles(path.join(config.filepath.ui, game.ui));
+
 
 //
 // HTTP Server
@@ -42,12 +51,7 @@ io.sockets.on('connection', function (client) {
 
 	var sessionId = client.sessionId;
 
-	// Send back login screen resource URLs
-	fs.readdir('./' + config.filepath.ui + '/' + game.loginUI, function (err, files) {
-		console.log(files);
-	});
-
-
+	client.emit('urls--login-ui', ui);
 
 	// client.join('room');
 

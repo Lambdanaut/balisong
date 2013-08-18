@@ -22,7 +22,7 @@ Crafty.c('Grid', {
 // Anything drawn on the overworld
 Crafty.c('Actor', {
 	init: function() {
-		this.requires('2D, DOM, Grid');
+		this.requires('2D, Canvas, Grid');
 	},
 });
 

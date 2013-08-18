@@ -4,22 +4,29 @@ var Net = {
 
 		this.socket.on('connecting', function () {
 			if (Config.development) console.log("Connecting to server...");
-			Crafty("LoadingText").text("Connecting");
+			$("#connect-text").text("Connecting");
 		});
 
 		this.socket.on('connect', function () {
 			if (Config.development) console.log("Connection successful");
-			Crafty("LoadingText").text("Connected");
+			$("#connect-text").text("Connected");
 		});
 
 		this.socket.on('error', function (data) {
 			if (Config.development) console.log("Socket.io connection error");
-			Crafty("LoadingText").text("Connection Error");
+			$("#connect-text").text("Connection Error");
 		});
 
-		this.socket.on('newCharacter', function (data) {
+		// When receiving a list of URLs of login graphics to preload
+		this.socket.on('urls--login-ui', function (data) {
 			console.log(data);
-			this.socket.emit('my other event', { my: 'data' });
+			Game.ui = data;
+			absoluteURLs = [];
+			for(var filename in data) {
+				absoluteURLs.push(data[filename]);
+			}
+			// this.socket.emit('my other event', { my: 'data' });
+			Media.loginScreen(absoluteURLs);
 		});
 	},
 }
