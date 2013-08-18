@@ -47,12 +47,9 @@ function handler (req, res) {
 
 var players = [];
 io.sockets.on('connection', function (client) {	
-	// console.log("New connection: sessionID " + util.inspect(client));
-
-	var sessionId = client.sessionId;
-
 	client.emit('urls--ui', ui);
 
+	// console.log("New connection: sessionID " + util.inspect(client));
 	// client.join('room');
 
 	// Create the character
@@ -64,4 +61,8 @@ io.sockets.on('connection', function (client) {
 	// client.on('my other event', function (data) {
 	// 	console.log(data);
 	// });
- });
+});
+
+io.sockets.on('download-map', function (client) {
+	client.emit(path.join(config.filepath.resources, 'test.json'));
+});

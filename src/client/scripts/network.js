@@ -14,9 +14,9 @@ var Net = {
 			if (Config.development) console.log("Socket.io connection error");
 		});
 
-		// When receiving a list of URLs of login graphics to preload
+		// When receiving a list of URLs of login media to preload
 		this.socket.on('urls--ui', function (data) {
-			console.log(data);
+			if (Config.development) console.log("Received UI URLs");
 			Game.ui = data;
 
 			// Bootup and connecting loading screen

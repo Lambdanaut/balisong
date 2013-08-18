@@ -10,13 +10,18 @@ Crafty.scene('Loading--Boot', function(){
 
 	$("#loading-bar").fadeIn("100");
 
+
+	// Get the URLs of UI media
 	absoluteURLs = [];
 	for(var filename in Game.ui) {
 		absoluteURLs.push(Game.ui[filename]);
 	}
 
+	// Preload user interface media
 	Crafty.load(absoluteURLs,
 		function() {
+			if (Config.development) console.log("Pre-loaded UI interface");
+
 			//when loaded
 			Crafty.background("url('" + Game.ui['loadingBackground'] + "')");
 			// Crafty.audio.play("loaded.ogg"); //Play the loaded sound effect
