@@ -1,7 +1,7 @@
 var Media = {
 
 	init: function () {
-		Crafty.sprite(Config.tile.s, "https://www.google.com/images/srpr/logo4w.png", {
+		Crafty.sprite(Config.tile.s, "/home/lambdanaut/balisong/src/server/resources/img/sprites/original/blocks/grass_01.png", {
 			Grass: [0,0,1,1],
 		});
 

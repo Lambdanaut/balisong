@@ -12,8 +12,8 @@ var Config = {
 
 	// Canvas Size
 	canvas: {
-		w: 768,
-		h: 518,
+		w: 1200,
+		h: 650,
 	},
 
 	// Dimensions of isometric game tiles

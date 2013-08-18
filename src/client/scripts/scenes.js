@@ -3,7 +3,7 @@
 //
 Crafty.scene('Loading--Boot', function(){
 	if (Config.development) {
-		Crafty.e('2D, DOM, Text, Persist')
+		Crafty.e('2D, Canvas, Text, Persist')
 			.text('****')
 			.attr({ x: 0, y: 0, w: 100 })
 	}
