@@ -12,3 +12,17 @@
 8. Preload map graphics
 9. Create entities for all downloaded actors
 10. Display map entities
+
+## Ingame Server-Client back-and-forth
+
+1. Map is fully loaded
+2. Player presses the <- arrow key
+3. Client begins moving character to the left
+4. Client tells server that the player is moving to the left
+5. Server tells all clients in the room that player is moving to the left
+6. Client releases <- arrow key
+7. Client stops moving character to the left
+8. Server tells all clients in the room that player is no longer moving to the left
+9. Server ALSO tells all clients the player's new position
+
+The same process occurs if a player hits a barrier, rather than releasing the <- arrow key. 

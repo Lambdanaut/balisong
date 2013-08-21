@@ -1,15 +1,17 @@
 # TODO
 
 
+## Network
+
 * Client Startup Process
 * Chat system
+
 
 ## Graphics
 
 * Sprite Loader
 * Rotatable isomorphic display
 * Shadow
-
 
 ## Art
 
@@ -19,6 +21,15 @@
 ## Music
 
 * Hire a sound FX / Musician 
+
+
+## Code Quality / Robustness
+
+* Error handling of
+ * Server side json requires
+ * Network interrupts
+* Final weeklong bugtest extravaganza
+
 
 
 ## QUIT MY JOB. WORK FULL TIME ON BALISONG.

@@ -16,8 +16,9 @@
 	Fred Bak
 	Shaddowkarate
 	Triple Q (for the jams)
-		
+	John Bacon
+
 
 /* SITE */
 	Tools: Sublime Text, PaintTool SAI, The Gimp, Wacom Bamboo Tablet, Javascript, NodeJS, CraftyJS, Socket.io
-	Music we listen to: One Dream, One Neck, One Back; No Panties On; Ass Cheeks on my White Tee; Kryptonite Pussy; 99 Conkers;
+	Music we listened to while hacking away: One Dream, One Neck, One Back; No Panties On; Ass Cheeks on my White Tee; Kryptonite Pussy; 99 Conkers;

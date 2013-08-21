@@ -6,6 +6,7 @@
 			"resources": "resources",
 			"audio": "resources/audio",
 			"images": "resources/img",
+			"maps": "resources/maps",
 			"sprites": {
 				"path": "resources/img/sprites",
 

@@ -2,6 +2,17 @@ var Game = {
 	// An object of UI filepaths
 	ui: {},
 
+	// An object of currently loaded actors, indexed by ID
+	actors: {
+		blocks    : {},
+		objects   : {},
+		mobs      : {},
+		characters: {},
+	},
+
+	// An object of the current map data
+	map: {},
+
 	width: function() {
 		return Config.canvas.w * Config.tile.w;
 	},

@@ -46,23 +46,62 @@ function handler (req, res) {
 // }
 
 var players = [];
-io.sockets.on('connection', function (client) {	
-	client.emit('urls--ui', ui);
+io.sockets.on('connection', function (socket) {	
 
-	// console.log("New connection: sessionID " + util.inspect(client));
-	// client.join('room');
+	socket.emit('urls--ui', ui);
+
+	// console.log("New connection: sessionID " + util.inspect(socket));
+	// socket.join('room');
 
 	// Create the character
-	// players[client.sessionId] = createPlayer();
+	// players[socket.sessionId] = createPlayer();
 	// console.log(players);
 
-	// client.emit('newCharacter', { p: players[sessionId] });
+	// socket.emit('newCharacter', { p: players[sessionId] });
 
-	// client.on('my other event', function (data) {
+	// socket.on('my other event', function (data) {
 	// 	console.log(data);
 	// });
-});
 
-io.sockets.on('download-map', function (client) {
-	client.emit(path.join(config.filepath.resources, 'test.json'));
+	socket.on('new--map', function (data) {
+		console.log("DOWNLOADING MAP");
+
+		// --Cheating test--
+		// Perform some checks to make sure the character is able to load the map
+
+
+		// Load the new map from data
+		var map = require('./' + path.join(config.filepath.maps, "test.json"));
+
+		// Get a list of all actor's IDs from "map", then search the database
+		// for all of their stats to send back to the client
+
+
+		// Get actor metadata from our database
+		blocks = {0: {
+			url: "img/sprites/original/blocks/grass_01.png",
+		}};
+		objects = {};
+		mobs = {};
+		characters = {};
+
+		// Convert actor metadata relative graphics paths to absolute paths
+		async.each([blocks, objects, mobs, characters], function () {
+
+		}, function (err, actors) {
+			// Combine actor metadata with map variable and send back to the client
+			// {id : actor-metadata}
+			map.actors = {};
+			map.actors.blocks = {0: {
+				url: "img/sprites/original/blocks/grass_01.png",
+			}};
+			map.actors.objects = {};
+			map.actors.mobs = {};
+			map.actors.characters = {};
+
+			socket.emit('new--map', map);
+		})
+
+	});
+
 });
