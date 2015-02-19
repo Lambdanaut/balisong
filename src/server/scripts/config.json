@@ -2,6 +2,11 @@
 	"config" : {
 		"development": true,
 
+		"network": {
+			"host": "0.0.0.0",
+			"port": 80
+		},
+
 		"filepath": {
 			"resources": "resources",
 			"audio": "resources/audio",
@@ -18,6 +23,6 @@
 			"ui": "resources/img/ui"
 		},
 
-		"storage": "local"
+		"storage": "Local"
 	}
 }

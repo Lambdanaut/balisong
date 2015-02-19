@@ -56,6 +56,6 @@ util.inherits(S3Storage, Storage);
 // exports.S3Storage = S3Storage;
 
 exports.storageMap = {
-	"local": LocalStorage,
+	"Local": LocalStorage,
 	"S3": S3Storage,
 }

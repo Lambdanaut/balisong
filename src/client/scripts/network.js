@@ -5,7 +5,7 @@
 //
 
 var Net = {
-	socket: io.connect(Config.network.host),
+	socket: io.connect(Config.network.host + ":" + Config.network.port),
 	setup: function () {
 
 		this.socket.on('connecting', function () {

@@ -29,7 +29,7 @@ var ui = Storage.getArtPackFiles(path.join(config.filepath.ui, game.ui));
 //
 // HTTP Server
 //
-app.listen(80);
+app.listen(config.network.port);
 function handler (req, res) {
 	res.writeHead(403);
 	res.end("Silly. No HTTP here! ");

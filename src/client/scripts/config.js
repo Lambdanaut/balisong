@@ -5,9 +5,10 @@
 var Config = {
 	development: true,
 
+	// The server's IP address and domain name
 	network: {
-		// The server's IP address or domain name
 		host: "http://localhost",
+		port: 80,
 	},
 
 	// Canvas Size
