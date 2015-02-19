@@ -46,14 +46,12 @@ util.inherits(LocalStorage, Storage);
 LocalStorage.prototype.get = function (filepath) {
     return path.resolve(filepath);
 };
-// exports.LocalStorage = LocalStorage;
 
 // Class for accessing resources saved on Amazon S3
 S3Storage = function () {
 	this.name = "S3";
 };
 util.inherits(S3Storage, Storage);
-// exports.S3Storage = S3Storage;
 
 exports.storageMap = {
 	"Local": LocalStorage,

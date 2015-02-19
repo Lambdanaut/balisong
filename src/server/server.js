@@ -6,25 +6,29 @@ var   app = require('http').createServer(handler)
 	, util = require('util');
 
 // External Libs
-var   io = require('socket.io').listen(app)
-	, async = require('async');
+var   async = require('async')
+	, io = require('socket.io').listen(app)
+    , mongoose = require('mongoose');
 
 // Server Libs
 var	  config = require('./scripts/config.json').config
 	, components = require('./scripts/components.js')
+	, errors = require('./scripts/errors.js')
+	, models = require('./scripts/models.js')
 	, resources = require('./scripts/resources.js');
+
+//
+// Database
+//
+mongoose.connect('mongodb://' + config.database.host + '/' + config.database.collection);
 
 //
 // Resource Storage
 //
 var Storage = new resources.storageMap[config.storage]();
 
-// Game File
-var	game = require('./' + config.filepath.resources + '/game.json').game;
-
 // UI
-var ui = Storage.getArtPackFiles(path.join(config.filepath.ui, game.ui));
-
+var ui = Storage.getArtPackFiles(path.join(config.filepath.ui, 'original'));
 
 //
 // HTTP Server
@@ -32,7 +36,7 @@ var ui = Storage.getArtPackFiles(path.join(config.filepath.ui, game.ui));
 app.listen(config.network.port);
 function handler (req, res) {
 	res.writeHead(403);
-	res.end("Silly. No HTTP here! ");
+	res.end('Silly. No HTTP here! ');
 }
 
 //
@@ -64,43 +68,47 @@ io.sockets.on('connection', function (socket) {
 	// });
 
 	socket.on('new--map', function (data) {
-		console.log("DOWNLOADING MAP");
+		console.log('DOWNLOADING MAP');
 
 		// --Cheating test--
 		// Perform some checks to make sure the character is able to load the map
 
 
-		// Load the new map from data
-		var map = require('./' + path.join(config.filepath.maps, "test.json"));
-
-		// Get a list of all actor's IDs from "map", then search the database
-		// for all of their stats to send back to the client
+		// Load the map from database
+		models.Map.loadMap('507f1f77bcf86cd799439011', function (err, map) {
+			if (err) return errors.modelQueryError(err);
 
 
-		// Get actor metadata from our database
-		blocks = {0: {
-			url: "img/sprites/original/blocks/grass_01.png",
-		}};
-		objects = {};
-		mobs = {};
-		characters = {};
+			// Get a list of all actor's IDs from "map", then search the database
+			// for all of their stats to send back to the client
 
-		// Convert actor metadata relative graphics paths to absolute paths
-		async.each([blocks, objects, mobs, characters], function () {
 
-		}, function (err, actors) {
-			// Combine actor metadata with map variable and send back to the client
-			// {id : actor-metadata}
-			map.actors = {};
-			map.actors.blocks = {0: {
-				url: "img/sprites/original/blocks/grass_01.png",
+			// Get actor metadata from our database
+			blocks = {0: {
+				url: 'img/sprites/original/blocks/grass_01.png',
 			}};
-			map.actors.objects = {};
-			map.actors.mobs = {};
-			map.actors.characters = {};
+			objects = {};
+			mobs = {};
+			characters = {};
 
-			socket.emit('new--map', map);
-		})
+			// Convert actor metadata relative graphics paths to absolute paths
+			async.each([blocks, objects, mobs, characters], function () {
+
+			}, function (err, actors) {
+				// Combine actor metadata with map variable and send back to the client
+				// {id : actor-metadata}
+				map.actors = {};
+				map.actors.blocks = {0: {
+					url: "img/sprites/original/blocks/grass_01.png",
+				}};
+				map.actors.objects = {};
+				map.actors.mobs = {};
+				map.actors.characters = {};
+
+				socket.emit('new--map', map);
+			});
+
+		});
 
 	});
 

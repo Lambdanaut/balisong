@@ -34,7 +34,7 @@ var Net = {
 
 		// Receiving new map data (data.map)
 		// Contains lists of all actors on the map (data.map.blocks; data.map.mobs; etc..)
-		// Also Contains lists of metadata for actors on the map (data.actors.blocks, data.actors.objects; etc)
+		// Also contains lists of metadata for actors on the map (data.actors.blocks, data.actors.objects; etc)
 		this.socket.on('new--map', function (data) {
 			if (Config.development) console.log("Received new map meta-data");
 			console.log(data);
