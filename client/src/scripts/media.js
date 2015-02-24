@@ -1,0 +1,6 @@
+var Media = {
+
+    init: function () {
+    },
+
+}

@@ -46,8 +46,5 @@ var MapSchema = new Schema({
         "y": Number
     }]
 });
-MapSchema.statics.loadMap = function (id, cb) {
-    this.find({_id: id}, cb);
-}
 exports.Map = mongoose.model('map', MapSchema);
 

@@ -1,6 +1,0 @@
-var Media = {
-
-	init: function () {
-	},
-
-}
