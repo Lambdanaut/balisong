@@ -23,7 +23,7 @@ import Data.Time
 
 import qualified Config
 
--- Data Models
+-- Persistent Data Models
 let mongoSettings = (mkPersistSettings (ConT ''MongoContext)) {mpsGeneric = False}
     in share [mkPersist mongoSettings] [persistLowerCase|
 

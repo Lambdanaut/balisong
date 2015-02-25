@@ -47,4 +47,3 @@ var MapSchema = new Schema({
     }]
 });
 exports.Map = mongoose.model('map', MapSchema);
-

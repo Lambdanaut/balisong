@@ -1,5 +1,6 @@
 module Config(
-    serverPort
+    serverHost
+,   serverPort
 ,   mongoHost
 ,   mongoPort
 ,   mongoCollection
@@ -11,6 +12,7 @@ import Data.Text (pack)
 import Data.Time.Clock (NominalDiffTime)
 import Network (PortID (PortNumber))
 
+serverHost = "0.0.0.0"
 serverPort = 8080 :: Int
 
 mongoHost = "localhost"
