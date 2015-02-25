@@ -7,10 +7,13 @@
 {-# LANGUAGE QuasiQuotes                #-}
 {-# LANGUAGE TemplateHaskell            #-}
 {-# LANGUAGE TypeFamilies               #-}
-module Data where
+module Data(
+    User
+,   Ui
+,   Game
+)where
 
 import Control.Monad.IO.Class (liftIO)
-import Network (PortID (PortNumber))
 
 import Database.Persist
 import Database.Persist.TH
@@ -18,44 +21,41 @@ import Language.Haskell.TH.Syntax
 import Database.Persist.MongoDB
 import Data.Time
 
+import qualified Config
+
+-- Data Models
 let mongoSettings = (mkPersistSettings (ConT ''MongoContext)) {mpsGeneric = False}
     in share [mkPersist mongoSettings] [persistLowerCase|
 
-Person
-    name        String
-    age         Int         Maybe
-    emails      [String]
-    address     Address     Maybe
+User
+    username    String
+    password    String
+    email       String
     deriving (Show)
-Address
-    line1       String
-    line2       String      Maybe
-    city        String
-    state       String
-    zip         Int
-    deriving (Show)
-BlogPost
+Ui
     title       String
-    authorId    PersonId
+    authorId    UserId
+    description String
     deriving (Show)
+Game
+    title       String
+    authorId    UserId
+    version     String
+    description String
+    ui          UiId
+    deriving (Show)
+
 |]
 
 main :: IO ()
-main = withMongoDBConn "test" "localhost" (PortNumber 27017) Nothing 2000 $ \pool -> do
+main = (withMongoDBConn Config.mongoCollection Config.mongoHost
+        Config.mongoPort Config.mongoAuth Config.mongoNominalDiffTime) $ \pool -> do
     runMongoDBPool master (do
-        let johnAddress = Address "123 W Street Rd." Nothing "Springfield" "Missouri" 65806
-        johnId <- insert $ Person "John Doe" (Just 35) ["john@doe.com", "johndoe@mail.com"] (Just johnAddress)
-        janeId <- insert $ Person "Jane Doe" Nothing ["jane@doe.com", "janedoe@mail.com"] Nothing
+        lambdanautId <- insert $ User "Lambdanaut" "my_password" "proetlb@gmail.com"
+        uiId <- insert $ Ui "Classic" lambdanautId "A classic UI"
+        gameId <- insert $ Game "Balisong" lambdanautId "0.0.1" "An awesome game" uiId
 
-        insert $ BlogPost "My first post!" johnId
-        insert $ BlogPost "One more for good measure" johnId
+        lambdanaut <- get lambdanautId
+        liftIO $ print (lambdanaut :: Maybe User)
 
-        oneJohnPost <- selectList [BlogPostAuthorId ==. johnId] [LimitTo 1]
-        liftIO $ print (oneJohnPost :: [Entity BlogPost])
-
-        john <- get johnId
-        liftIO $ print (john :: Maybe Person)
-
-        delete janeId
-        deleteWhere [BlogPostAuthorId ==. johnId]
         ) pool

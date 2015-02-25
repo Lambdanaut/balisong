@@ -6,11 +6,11 @@ module Server(
 
 import Web.SocketIO
 
-import qualified Config (port)
+import qualified Config
 import qualified Data
 
 runServer :: IO ()
-runServer = serverConfig Config.port defaultConfig $ do
+runServer = serverConfig Config.serverPort defaultConfig $ do
 
     -- ping pong
     on "ping" $ emit "pong" []
