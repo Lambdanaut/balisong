@@ -15,8 +15,11 @@ import qualified Data
 
 application :: MVar [Int] -> WS.ServerApp
 application state pending = do
-    liftIO $ print "asdf"
     conn <- WS.acceptRequest pending
+    liftIO $ print "Connection!"
+    msg <- WS.receive conn
+    liftIO $ print msg
+    WS.send conn msg
     WS.forkPingThread conn 30
 
 runServer :: IO ()
