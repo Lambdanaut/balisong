@@ -6,8 +6,8 @@ if ("WebSocket" in window)
     ws.onopen = function()
     {
         // Web Socket is connected, send data using send()
-        ws.send("Message to send");
-            console.log("Message is sent...");
+        ws.send("SEND THIS MESSAGE BACK PLEASE :)");
+        console.log("Message is sent...");
     };
     ws.onmessage = function (evt) 
     { 

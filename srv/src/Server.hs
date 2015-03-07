@@ -9,6 +9,7 @@ import qualified Data.Text as T
 import qualified Network.WebSockets as WS
 import qualified Network.WebSockets.Snap as WSSnap
 
+import qualified BackendData
 import qualified Config
 import qualified Data
 

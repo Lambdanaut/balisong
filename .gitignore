@@ -12,6 +12,8 @@
 /srv_old/src/npm-debug.log
 /srv_old/src/node_modules/
 
+elm-stuff/
+
 *.swp
 *.swo
 
