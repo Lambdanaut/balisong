@@ -1,7 +1,7 @@
 import Graphics.Element (..)
 import Keyboard
 import Signal
-import Signal (Signal)
+import Signal (Signal, Channel)
 import Text
 import Time
 import WebSocket
@@ -17,7 +17,7 @@ Task: Redefine `UserInput` to include all of the information you need.
 
 ------------------------------------------------------------------------------}
 
-type alias UserInput = {space : Bool, paddle1 : Int, paddle2 : Int}
+type alias UserInput = {space : Bool, arrows : {x : Int, y : Int}}
 
 type alias Input =
     { timeDelta : Float
@@ -43,10 +43,10 @@ be an empty list (no objects at the start):
 
 ------------------------------------------------------------------------------}
 
-type alias GameState = {}
+type alias GameState = String
 
 defaultGame : GameState
-defaultGame = {}
+defaultGame = "LOADING"
 
 
 
@@ -61,7 +61,7 @@ Task: redefine `stepGame` to use the UserInput and GameState
 ------------------------------------------------------------------------------}
 
 stepGame: Input -> GameState -> GameState
-stepGame {timeDelta, userInput} gameState = gameState
+stepGame {timeDelta, userInput, networkInput} gameState = networkInput
 
 
 
@@ -88,20 +88,22 @@ delta : Signal Float
 delta = Time.fps 30
 
 
+-- Channel for writing messages to the network with "send networkOutputChannel xyz"
+
+networkOutput : Signal String
+networkOutput = Signal.subscribe networkOutputChannel
+
+
+-- Signal for reading messages from the network
 networkInput : Signal String
 networkInput = WebSocket.connect "ws://localhost:8080" networkOutput
 
 
-networkOutput : Signal String
-networkOutput = Signal.constant "Hello Server! "
-
-
 userInput : Signal UserInput
 userInput =
-  Signal.map3 UserInput
+  Signal.map2 UserInput
     Keyboard.space
-    (Signal.map .y Keyboard.wasd)
-    (Signal.map .y Keyboard.arrows)
+    Keyboard.wasd
 
 
 input : Signal Input

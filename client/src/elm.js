@@ -1487,7 +1487,8 @@ Elm.Main.make = function (_elm) {
    $Text = Elm.Text.make(_elm),
    $Time = Elm.Time.make(_elm),
    $WebSocket = Elm.WebSocket.make(_elm);
-   var networkOutput = $Signal.constant("Hello Server! ");
+   var networkOutputChannel = $Signal.channel("Hello Server! ");
+   var networkOutput = $Signal.subscribe(networkOutputChannel);
    var networkInput = A2($WebSocket.connect,
    "ws://localhost:8080",
    networkOutput);
@@ -1498,11 +1499,10 @@ Elm.Main.make = function (_elm) {
    var stepGame = F2(function (_v0,
    gameState) {
       return function () {
-         return gameState;
+         return _v0.networkInput;
       }();
    });
-   var defaultGame = {_: {}};
-   var GameState = {_: {}};
+   var defaultGame = "LOADING";
    var Input = F3(function (a,
    b,
    c) {
@@ -1511,27 +1511,16 @@ Elm.Main.make = function (_elm) {
              ,timeDelta: a
              ,userInput: b};
    });
-   var UserInput = F3(function (a,
-   b,
-   c) {
+   var UserInput = F2(function (a,
+   b) {
       return {_: {}
-             ,paddle1: b
-             ,paddle2: c
+             ,arrows: b
              ,space: a};
    });
-   var userInput = A4($Signal.map3,
+   var userInput = A3($Signal.map2,
    UserInput,
    $Keyboard.space,
-   A2($Signal.map,
-   function (_) {
-      return _.y;
-   },
-   $Keyboard.wasd),
-   A2($Signal.map,
-   function (_) {
-      return _.y;
-   },
-   $Keyboard.arrows));
+   $Keyboard.wasd);
    var input = A2($Signal.sampleOn,
    delta,
    A4($Signal.map3,
@@ -1549,13 +1538,13 @@ Elm.Main.make = function (_elm) {
    _elm.Main.values = {_op: _op
                       ,UserInput: UserInput
                       ,Input: Input
-                      ,GameState: GameState
                       ,defaultGame: defaultGame
                       ,stepGame: stepGame
                       ,display: display
                       ,delta: delta
-                      ,networkInput: networkInput
+                      ,networkOutputChannel: networkOutputChannel
                       ,networkOutput: networkOutput
+                      ,networkInput: networkInput
                       ,userInput: userInput
                       ,input: input
                       ,gameState: gameState
