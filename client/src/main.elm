@@ -1,7 +1,8 @@
 import Graphics.Element (..)
 import Keyboard
+import Mouse
 import Signal
-import Signal (Signal, Channel)
+import Signal (Signal, (<~))
 import Text
 import Time
 import WebSocket
@@ -88,11 +89,8 @@ delta : Signal Float
 delta = Time.fps 30
 
 
--- Channel for writing messages to the network with "send networkOutputChannel xyz"
-
 networkOutput : Signal String
-networkOutput = Signal.subscribe networkOutputChannel
-
+networkOutput = toString <~ Mouse.position
 
 -- Signal for reading messages from the network
 networkInput : Signal String

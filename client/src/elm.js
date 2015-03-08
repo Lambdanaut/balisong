@@ -1481,14 +1481,17 @@ Elm.Main.make = function (_elm) {
    _L = _N.List.make(_elm),
    _P = _N.Ports.make(_elm),
    $moduleName = "Main",
+   $Basics = Elm.Basics.make(_elm),
    $Graphics$Element = Elm.Graphics.Element.make(_elm),
    $Keyboard = Elm.Keyboard.make(_elm),
+   $Mouse = Elm.Mouse.make(_elm),
    $Signal = Elm.Signal.make(_elm),
    $Text = Elm.Text.make(_elm),
    $Time = Elm.Time.make(_elm),
    $WebSocket = Elm.WebSocket.make(_elm);
-   var networkOutputChannel = $Signal.channel("Hello Server! ");
-   var networkOutput = $Signal.subscribe(networkOutputChannel);
+   var networkOutput = A2($Signal._op["<~"],
+   $Basics.toString,
+   $Mouse.position);
    var networkInput = A2($WebSocket.connect,
    "ws://localhost:8080",
    networkOutput);
@@ -1542,7 +1545,6 @@ Elm.Main.make = function (_elm) {
                       ,stepGame: stepGame
                       ,display: display
                       ,delta: delta
-                      ,networkOutputChannel: networkOutputChannel
                       ,networkOutput: networkOutput
                       ,networkInput: networkInput
                       ,userInput: userInput
@@ -1624,6 +1626,33 @@ Elm.Maybe.make = function (_elm) {
                        ,Just: Just
                        ,Nothing: Nothing};
    return _elm.Maybe.values;
+};
+Elm.Mouse = Elm.Mouse || {};
+Elm.Mouse.make = function (_elm) {
+   "use strict";
+   _elm.Mouse = _elm.Mouse || {};
+   if (_elm.Mouse.values)
+   return _elm.Mouse.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   _P = _N.Ports.make(_elm),
+   $moduleName = "Mouse",
+   $Native$Mouse = Elm.Native.Mouse.make(_elm),
+   $Signal = Elm.Signal.make(_elm);
+   var clicks = $Native$Mouse.clicks;
+   var isDown = $Native$Mouse.isDown;
+   var y = $Native$Mouse.y;
+   var x = $Native$Mouse.x;
+   var position = $Native$Mouse.position;
+   _elm.Mouse.values = {_op: _op
+                       ,position: position
+                       ,x: x
+                       ,y: y
+                       ,isDown: isDown
+                       ,clicks: clicks};
+   return _elm.Mouse.values;
 };
 
 Elm.Native.Basics = {};
@@ -2753,6 +2782,67 @@ Elm.Native.List.make = function(elm) {
     };
     return elm.Native.List.values = Elm.Native.List.values;
 
+};
+
+Elm.Native = Elm.Native || {};
+Elm.Native.Mouse = {};
+Elm.Native.Mouse.make = function(localRuntime) {
+
+    localRuntime.Native = localRuntime.Native || {};
+    localRuntime.Native.Mouse = localRuntime.Native.Mouse || {};
+    if (localRuntime.Native.Mouse.values) {
+        return localRuntime.Native.Mouse.values;
+    }
+
+    var Signal = Elm.Signal.make(localRuntime);
+    var Utils = Elm.Native.Utils.make(localRuntime);
+
+    var position = Signal.constant(Utils.Tuple2(0,0));
+    position.defaultNumberOfKids = 2;
+
+    // do not move x and y into Elm. By setting their default number
+    // of kids, it is possible to detatch the mouse listeners if
+    // they are not needed.
+    function fst(pair) {
+        return pair._0;
+    }
+    function snd(pair) {
+        return pair._1;
+    }
+
+    var x = A2( Signal.map, fst, position );
+    x.defaultNumberOfKids = 0;
+
+    var y = A2( Signal.map, snd, position );
+    y.defaultNumberOfKids = 0;
+
+    var isDown = Signal.constant(false);
+    var clicks = Signal.constant(Utils.Tuple0);
+
+    var node = localRuntime.isFullscreen()
+        ? document
+        : localRuntime.node;
+
+    localRuntime.addListener([clicks.id], node, 'click', function click() {
+        localRuntime.notify(clicks.id, Utils.Tuple0);
+    });
+    localRuntime.addListener([isDown.id], node, 'mousedown', function down() {
+        localRuntime.notify(isDown.id, true);
+    });
+    localRuntime.addListener([isDown.id], node, 'mouseup', function up() {
+        localRuntime.notify(isDown.id, false);
+    });
+    localRuntime.addListener([position.id], node, 'mousemove', function move(e) {
+        localRuntime.notify(position.id, Utils.getXY(e));
+    });
+
+    return localRuntime.Native.Mouse.values = {
+        position: position,
+        x: x,
+        y: y,
+        isDown: isDown,
+        clicks: clicks
+    };
 };
 
 Elm.Native.Ports = {};
