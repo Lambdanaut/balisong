@@ -1496,7 +1496,7 @@ Elm.Main.make = function (_elm) {
    "ws://localhost:8080",
    networkOut);
    var delta = $Time.fps(30);
-   var display = function (gameState) {
+   var render = function (gameState) {
       return $Text.asText(gameState);
    };
    var stepGame = F2(function (_v0,
@@ -1506,33 +1506,30 @@ Elm.Main.make = function (_elm) {
       }();
    });
    var defaultGame = {_: {}
+                     ,loaded: {_: {}}
                      ,map: _L.fromArray([])
                      ,players: _L.fromArray([])};
-   var GameState = F2(function (a,
-   b) {
+   var GameState = F3(function (a,
+   b,
+   c) {
       return {_: {}
+             ,loaded: c
              ,map: a
              ,players: b};
    });
-   var Tile = F4(function (a,
+   var LoadedResource = {_: {}};
+   var Placeable = F5(function (a,
    b,
    c,
-   d) {
-      return {_: {}
-             ,id: a
-             ,x: b
-             ,y: c
-             ,z: d};
-   });
-   var Player = F4(function (a,
-   b,
-   c,
-   d) {
-      return {_: {}
-             ,id: a
-             ,x: b
-             ,y: c
-             ,z: d};
+   d,
+   e) {
+      return _U.insert("z",
+      d,
+      _U.insert("y",
+      c,
+      _U.insert("x",
+      b,
+      _U.insert("id",a,e))));
    });
    var Input = F3(function (a,
    b,
@@ -1548,33 +1545,36 @@ Elm.Main.make = function (_elm) {
              ,arrows: b
              ,space: a};
    });
-   var userInput = A3($Signal.map2,
+   var userInput = A2($Signal._op["~"],
+   A2($Signal._op["<~"],
    UserInput,
-   $Keyboard.space,
+   $Keyboard.space),
    $Keyboard.wasd);
    var input = A2($Signal.sampleOn,
    delta,
-   A4($Signal.map3,
+   A2($Signal._op["~"],
+   A2($Signal._op["~"],
+   A2($Signal._op["<~"],
    Input,
-   delta,
-   userInput,
+   delta),
+   userInput),
    networkIn));
    var gameState = A3($Signal.foldp,
    stepGame,
    defaultGame,
    input);
-   var main = A2($Signal.map,
-   display,
+   var main = A2($Signal._op["<~"],
+   render,
    gameState);
    _elm.Main.values = {_op: _op
                       ,UserInput: UserInput
                       ,Input: Input
-                      ,Player: Player
-                      ,Tile: Tile
+                      ,Placeable: Placeable
+                      ,LoadedResource: LoadedResource
                       ,GameState: GameState
                       ,defaultGame: defaultGame
                       ,stepGame: stepGame
-                      ,display: display
+                      ,render: render
                       ,delta: delta
                       ,networkOut: networkOut
                       ,networkIn: networkIn

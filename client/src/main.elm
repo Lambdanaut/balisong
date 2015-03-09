@@ -2,7 +2,7 @@ import Graphics.Element (..)
 import Keyboard
 import Mouse
 import Signal
-import Signal (Signal, (<~))
+import Signal (Signal, (<~), (~))
 import Text
 import Time
 import WebSocket
@@ -50,29 +50,33 @@ be an empty list (no objects at the start):
 
 ------------------------------------------------------------------------------}
 
-type alias Player = 
-  { id   : String
+type alias Placeable a = 
+  { a |
+    id   : String
   , x    : Float 
   , y    : Float
   , z    : Float
   }
 
-type alias Tile = 
-  { id : String
-  , x  : Int
-  , y  : Int
-  , z  : Int
+type alias Player = Placeable
+  { name : String
   }
+
+type alias Tile = Placeable {}
+
+type alias LoadedResource = {}
 
 type alias GameState =
   { map     : List Tile
   , players : List Player
+  , loaded  : {} -- Dictionary of {resource id: loaded data}
   }
 
 defaultGame : GameState
 defaultGame = 
   { map     = []
   , players = []
+  , loaded  = {}
   }
 
 
@@ -87,7 +91,7 @@ Task: redefine `stepGame` to use the UserInput and GameState
 
 ------------------------------------------------------------------------------}
 
-stepGame: Input -> GameState -> GameState
+stepGame : Input -> GameState -> GameState
 stepGame {timeDelta, userInput, networkIn} gameState = gameState
 
 
@@ -100,8 +104,8 @@ Task: redefine `display` to use the GameState you defined in part 2.
 
 ------------------------------------------------------------------------------}
 
-display: GameState -> Element
-display gameState = Text.asText gameState
+render : GameState -> Element
+render gameState = Text.asText gameState
 
 
 
@@ -125,13 +129,13 @@ networkIn = WebSocket.connect "ws://localhost:8080" networkOut
 
 userInput : Signal UserInput
 userInput =
-  Signal.map2 UserInput
-    Keyboard.space
-    Keyboard.wasd
+  UserInput
+  <~ Keyboard.space
+  ~  Keyboard.wasd
 
 
 input : Signal Input
-input = Signal.sampleOn delta (Signal.map3 Input delta userInput networkIn)
+input = Signal.sampleOn delta (Input <~ delta ~ userInput ~ networkIn)
 
 
 gameState : Signal GameState
@@ -139,4 +143,4 @@ gameState = Signal.foldp stepGame defaultGame input
 
 
 main : Signal Element
-main = Signal.map display gameState
+main = render <~ gameState
