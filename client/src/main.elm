@@ -18,13 +18,19 @@ Task: Redefine `UserInput` to include all of the information you need.
 
 ------------------------------------------------------------------------------}
 
-type alias UserInput = {space : Bool, arrows : {x : Int, y : Int}}
+type alias UserInput = 
+  { space  : Bool
+  , arrows : 
+    { x : Int
+    , y : Int
+    }
+  }
 
 type alias Input =
-    { timeDelta : Float
-    , userInput : UserInput
-    , networkInput : String
-    }
+  { timeDelta : Float
+  , userInput : UserInput
+  , networkIn : String
+  }
 
 
 
@@ -44,10 +50,30 @@ be an empty list (no objects at the start):
 
 ------------------------------------------------------------------------------}
 
-type alias GameState = String
+type alias Player = 
+  { id   : String
+  , x    : Float 
+  , y    : Float
+  , z    : Float
+  }
+
+type alias Tile = 
+  { id : String
+  , x  : Int
+  , y  : Int
+  , z  : Int
+  }
+
+type alias GameState =
+  { map     : List Tile
+  , players : List Player
+  }
 
 defaultGame : GameState
-defaultGame = "LOADING"
+defaultGame = 
+  { map     = []
+  , players = []
+  }
 
 
 
@@ -62,7 +88,7 @@ Task: redefine `stepGame` to use the UserInput and GameState
 ------------------------------------------------------------------------------}
 
 stepGame: Input -> GameState -> GameState
-stepGame {timeDelta, userInput, networkInput} gameState = networkInput
+stepGame {timeDelta, userInput, networkIn} gameState = gameState
 
 
 
@@ -89,12 +115,12 @@ delta : Signal Float
 delta = Time.fps 30
 
 
-networkOutput : Signal String
-networkOutput = toString <~ Mouse.position
+networkOut : Signal String
+networkOut = toString <~ Mouse.position
 
--- Signal for reading messages from the network
-networkInput : Signal String
-networkInput = WebSocket.connect "ws://localhost:8080" networkOutput
+
+networkIn : Signal String
+networkIn = WebSocket.connect "ws://localhost:8080" networkOut
 
 
 userInput : Signal UserInput
@@ -105,7 +131,7 @@ userInput =
 
 
 input : Signal Input
-input = Signal.sampleOn delta (Signal.map3 Input delta userInput networkInput)
+input = Signal.sampleOn delta (Signal.map3 Input delta userInput networkIn)
 
 
 gameState : Signal GameState

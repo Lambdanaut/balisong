@@ -17,6 +17,7 @@ talk :: WS.Connection -> MVar [Int] -> IO ()
 talk conn state = forever $ do
     msg <- WS.receive conn
     liftIO $ print msg
+    WS.send conn msg
 
 
 application :: MVar [Int] -> WS.ServerApp

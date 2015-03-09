@@ -1489,12 +1489,12 @@ Elm.Main.make = function (_elm) {
    $Text = Elm.Text.make(_elm),
    $Time = Elm.Time.make(_elm),
    $WebSocket = Elm.WebSocket.make(_elm);
-   var networkOutput = A2($Signal._op["<~"],
+   var networkOut = A2($Signal._op["<~"],
    $Basics.toString,
    $Mouse.position);
-   var networkInput = A2($WebSocket.connect,
+   var networkIn = A2($WebSocket.connect,
    "ws://localhost:8080",
-   networkOutput);
+   networkOut);
    var delta = $Time.fps(30);
    var display = function (gameState) {
       return $Text.asText(gameState);
@@ -1502,15 +1502,43 @@ Elm.Main.make = function (_elm) {
    var stepGame = F2(function (_v0,
    gameState) {
       return function () {
-         return _v0.networkInput;
+         return gameState;
       }();
    });
-   var defaultGame = "LOADING";
+   var defaultGame = {_: {}
+                     ,map: _L.fromArray([])
+                     ,players: _L.fromArray([])};
+   var GameState = F2(function (a,
+   b) {
+      return {_: {}
+             ,map: a
+             ,players: b};
+   });
+   var Tile = F4(function (a,
+   b,
+   c,
+   d) {
+      return {_: {}
+             ,id: a
+             ,x: b
+             ,y: c
+             ,z: d};
+   });
+   var Player = F4(function (a,
+   b,
+   c,
+   d) {
+      return {_: {}
+             ,id: a
+             ,x: b
+             ,y: c
+             ,z: d};
+   });
    var Input = F3(function (a,
    b,
    c) {
       return {_: {}
-             ,networkInput: c
+             ,networkIn: c
              ,timeDelta: a
              ,userInput: b};
    });
@@ -1530,7 +1558,7 @@ Elm.Main.make = function (_elm) {
    Input,
    delta,
    userInput,
-   networkInput));
+   networkIn));
    var gameState = A3($Signal.foldp,
    stepGame,
    defaultGame,
@@ -1541,12 +1569,15 @@ Elm.Main.make = function (_elm) {
    _elm.Main.values = {_op: _op
                       ,UserInput: UserInput
                       ,Input: Input
+                      ,Player: Player
+                      ,Tile: Tile
+                      ,GameState: GameState
                       ,defaultGame: defaultGame
                       ,stepGame: stepGame
                       ,display: display
                       ,delta: delta
-                      ,networkOutput: networkOutput
-                      ,networkInput: networkInput
+                      ,networkOut: networkOut
+                      ,networkIn: networkIn
                       ,userInput: userInput
                       ,input: input
                       ,gameState: gameState
