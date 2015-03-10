@@ -70,6 +70,7 @@ type alias GameState =
   { map     : List Tile
   , players : List Player
   , loaded  : {} -- Dictionary of {resource id: loaded data}
+  , netmsg : String
   }
 
 defaultGame : GameState
@@ -77,6 +78,7 @@ defaultGame =
   { map     = []
   , players = []
   , loaded  = {}
+  , netmsg = ""
   }
 
 
@@ -92,7 +94,7 @@ Task: redefine `stepGame` to use the UserInput and GameState
 ------------------------------------------------------------------------------}
 
 stepGame : Input -> GameState -> GameState
-stepGame {timeDelta, userInput, networkIn} gameState = gameState
+stepGame {timeDelta, userInput, networkIn} gameState = {gameState | netmsg <- networkIn}
 
 
 
@@ -105,7 +107,7 @@ Task: redefine `display` to use the GameState you defined in part 2.
 ------------------------------------------------------------------------------}
 
 render : GameState -> Element
-render gameState = Text.asText gameState
+render gameState = Text.asText gameState.netmsg
 
 
 
@@ -135,7 +137,7 @@ userInput =
 
 
 input : Signal Input
-input = Signal.sampleOn delta (Input <~ delta ~ userInput ~ networkIn)
+input = Signal.sampleOn networkIn (Input <~ delta ~ userInput ~ networkIn)
 
 
 gameState : Signal GameState

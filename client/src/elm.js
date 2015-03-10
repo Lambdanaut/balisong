@@ -1497,24 +1497,29 @@ Elm.Main.make = function (_elm) {
    networkOut);
    var delta = $Time.fps(30);
    var render = function (gameState) {
-      return $Text.asText(gameState);
+      return $Text.asText(gameState.netmsg);
    };
    var stepGame = F2(function (_v0,
    gameState) {
       return function () {
-         return gameState;
+         return _U.replace([["netmsg"
+                            ,_v0.networkIn]],
+         gameState);
       }();
    });
    var defaultGame = {_: {}
                      ,loaded: {_: {}}
                      ,map: _L.fromArray([])
+                     ,netmsg: ""
                      ,players: _L.fromArray([])};
-   var GameState = F3(function (a,
+   var GameState = F4(function (a,
    b,
-   c) {
+   c,
+   d) {
       return {_: {}
              ,loaded: c
              ,map: a
+             ,netmsg: d
              ,players: b};
    });
    var LoadedResource = {_: {}};
@@ -1551,7 +1556,7 @@ Elm.Main.make = function (_elm) {
    $Keyboard.space),
    $Keyboard.wasd);
    var input = A2($Signal.sampleOn,
-   delta,
+   networkIn,
    A2($Signal._op["~"],
    A2($Signal._op["~"],
    A2($Signal._op["<~"],
