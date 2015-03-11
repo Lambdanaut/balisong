@@ -1,4 +1,6 @@
+import Automaton
 import Graphics.Element (..)
+import Color(grey)
 import Keyboard
 import Mouse
 import Signal
@@ -58,7 +60,7 @@ type alias Placeable a =
   , z    : Float
   }
 
-type alias Player = Placeable
+type alias PlayerCharacter = Placeable
   { name : String
   }
 
@@ -66,19 +68,29 @@ type alias Tile = Placeable {}
 
 type alias LoadedResource = {}
 
+type alias Map = 
+  { id    : String
+  , name  : String 
+  , tiles : List Tile
+  }
+
+type alias Settings = {}
+
 type alias GameState =
-  { map     : List Tile
-  , players : List Player
-  , loaded  : {} -- Dictionary of {resource id: loaded data}
-  , netmsg : String
+  { map      : Map
+  , settings : Settings
+  , players  : List PlayerCharacter
+  , loaded   : {} -- Dictionary of {resource id: loaded data}
+  , netmsg   : String
   }
 
 defaultGame : GameState
 defaultGame = 
-  { map     = []
-  , players = []
-  , loaded  = {}
-  , netmsg = ""
+  { map      = Map "" "" []
+  , settings = {}
+  , players  = []
+  , loaded   = {}
+  , netmsg   = ""
   }
 
 
@@ -106,8 +118,9 @@ Task: redefine `display` to use the GameState you defined in part 2.
 
 ------------------------------------------------------------------------------}
 
-render : GameState -> Element
-render gameState = Text.asText gameState.netmsg
+render : (Int, Int) -> GameState -> Element
+render (winH, winW) { map, settings, players, loaded, netmsg} =
+  color grey <| container winH winW middle <| Text.plainText netmsg
 
 
 
@@ -145,4 +158,4 @@ gameState = Signal.foldp stepGame defaultGame input
 
 
 main : Signal Element
-main = render <~ gameState
+main = render <~ Window.dimensions ~ gameState

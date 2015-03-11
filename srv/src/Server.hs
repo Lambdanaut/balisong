@@ -19,7 +19,6 @@ talk conn state = forever $ do
     liftIO $ print msg
     WS.send conn msg
 
-
 application :: MVar [Int] -> WS.ServerApp
 application state pending = do
     conn <- WS.acceptRequest pending

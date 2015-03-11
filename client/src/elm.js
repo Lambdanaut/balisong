@@ -1,4 +1,403 @@
 var Elm = Elm || { Native: {} };
+Elm.Automaton = Elm.Automaton || {};
+Elm.Automaton.make = function (_elm) {
+   "use strict";
+   _elm.Automaton = _elm.Automaton || {};
+   if (_elm.Automaton.values)
+   return _elm.Automaton.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   _P = _N.Ports.make(_elm),
+   $moduleName = "Automaton",
+   $Basics = Elm.Basics.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Signal = Elm.Signal.make(_elm);
+   var dequeue = function (q) {
+      return function () {
+         switch (q.ctor)
+         {case "_Tuple2":
+            switch (q._0.ctor)
+              {case "[]": switch (q._1.ctor)
+                   {case "[]":
+                      return $Maybe.Nothing;}
+                   break;}
+              switch (q._1.ctor)
+              {case "::":
+                 return $Maybe.Just({ctor: "_Tuple2"
+                                    ,_0: q._1._0
+                                    ,_1: {ctor: "_Tuple2"
+                                         ,_0: q._0
+                                         ,_1: q._1._1}});
+                 case "[]":
+                 return dequeue({ctor: "_Tuple2"
+                                ,_0: _L.fromArray([])
+                                ,_1: $List.reverse(q._0)});}
+              break;}
+         _U.badCase($moduleName,
+         "between lines 306 and 312");
+      }();
+   };
+   var enqueue = F2(function (x,
+   _v5) {
+      return function () {
+         switch (_v5.ctor)
+         {case "_Tuple2":
+            return {ctor: "_Tuple2"
+                   ,_0: A2($List._op["::"],
+                   x,
+                   _v5._0)
+                   ,_1: _v5._1};}
+         _U.badCase($moduleName,
+         "on line 303, column 22 to 31");
+      }();
+   });
+   var empty = {ctor: "_Tuple2"
+               ,_0: _L.fromArray([])
+               ,_1: _L.fromArray([])};
+   var step = F2(function (a,_v9) {
+      return function () {
+         switch (_v9.ctor)
+         {case "Step": return _v9._0(a);}
+         _U.badCase($moduleName,
+         "on line 68, column 19 to 22");
+      }();
+   });
+   var run = F3(function (auto,
+   base,
+   inputs) {
+      return function () {
+         var step = F2(function (a,
+         _v12) {
+            return function () {
+               switch (_v12.ctor)
+               {case "_Tuple2":
+                  switch (_v12._0.ctor)
+                    {case "Step":
+                       return _v12._0._0(a);}
+                    break;}
+               _U.badCase($moduleName,
+               "on line 55, column 28 to 31");
+            }();
+         });
+         return A2($Signal.map,
+         function (_v17) {
+            return function () {
+               switch (_v17.ctor)
+               {case "_Tuple2":
+                  return _v17._1;}
+               _U.badCase($moduleName,
+               "on line 57, column 29 to 30");
+            }();
+         },
+         A3($Signal.foldp,
+         step,
+         {ctor: "_Tuple2"
+         ,_0: auto
+         ,_1: base},
+         inputs));
+      }();
+   });
+   var Step = function (a) {
+      return {ctor: "Step",_0: a};
+   };
+   _op[">>>"] = F2(function (f,g) {
+      return Step(function (a) {
+         return function () {
+            var $ = A2(step,a,f),
+            f$ = $._0,
+            b = $._1;
+            var $ = A2(step,b,g),
+            g$ = $._0,
+            c = $._1;
+            return {ctor: "_Tuple2"
+                   ,_0: A2(_op[">>>"],f$,g$)
+                   ,_1: c};
+         }();
+      });
+   });
+   _op["<<<"] = F2(function (g,f) {
+      return Step(function (a) {
+         return function () {
+            var $ = A2(step,a,f),
+            f$ = $._0,
+            b = $._1;
+            var $ = A2(step,b,g),
+            g$ = $._0,
+            c = $._1;
+            return {ctor: "_Tuple2"
+                   ,_0: A2(_op["<<<"],g$,f$)
+                   ,_1: c};
+         }();
+      });
+   });
+   var branch = F2(function (f,g) {
+      return Step(function (a) {
+         return function () {
+            var $ = A2(step,a,g),
+            g$ = $._0,
+            c = $._1;
+            var $ = A2(step,a,f),
+            f$ = $._0,
+            b = $._1;
+            return {ctor: "_Tuple2"
+                   ,_0: A2(branch,f$,g$)
+                   ,_1: {ctor: "_Tuple2"
+                        ,_0: b
+                        ,_1: c}};
+         }();
+      });
+   });
+   var pair = F2(function (f,g) {
+      return Step(function (_v21) {
+         return function () {
+            switch (_v21.ctor)
+            {case "_Tuple2":
+               return function () {
+                    var $ = A2(step,_v21._1,g),
+                    g$ = $._0,
+                    d = $._1;
+                    var $ = A2(step,_v21._0,f),
+                    f$ = $._0,
+                    c = $._1;
+                    return {ctor: "_Tuple2"
+                           ,_0: A2(pair,f$,g$)
+                           ,_1: {ctor: "_Tuple2"
+                                ,_0: c
+                                ,_1: d}};
+                 }();}
+            _U.badCase($moduleName,
+            "between lines 137 and 140");
+         }();
+      });
+   });
+   var first = function (auto) {
+      return Step(function (_v25) {
+         return function () {
+            switch (_v25.ctor)
+            {case "_Tuple2":
+               return function () {
+                    var $ = A2(step,
+                    _v25._0,
+                    auto),
+                    f = $._0,
+                    o = $._1;
+                    return {ctor: "_Tuple2"
+                           ,_0: first(f)
+                           ,_1: {ctor: "_Tuple2"
+                                ,_0: o
+                                ,_1: _v25._1}};
+                 }();}
+            _U.badCase($moduleName,
+            "between lines 159 and 161");
+         }();
+      });
+   };
+   var second = function (auto) {
+      return Step(function (_v29) {
+         return function () {
+            switch (_v29.ctor)
+            {case "_Tuple2":
+               return function () {
+                    var $ = A2(step,
+                    _v29._1,
+                    auto),
+                    f = $._0,
+                    o = $._1;
+                    return {ctor: "_Tuple2"
+                           ,_0: second(f)
+                           ,_1: {ctor: "_Tuple2"
+                                ,_0: _v29._0
+                                ,_1: o}};
+                 }();}
+            _U.badCase($moduleName,
+            "between lines 180 and 182");
+         }();
+      });
+   };
+   var loop = F2(function (state,
+   auto) {
+      return Step(function (input) {
+         return function () {
+            var _ = A2(step,
+            {ctor: "_Tuple2"
+            ,_0: input
+            ,_1: state},
+            auto);
+            var auto$ = function () {
+               switch (_.ctor)
+               {case "_Tuple2":
+                  switch (_._1.ctor)
+                    {case "_Tuple2": return _._0;}
+                    break;}
+               _U.badCase($moduleName,
+               "on line 221, column 36 to 59");
+            }();
+            var output = function () {
+               switch (_.ctor)
+               {case "_Tuple2":
+                  switch (_._1.ctor)
+                    {case "_Tuple2":
+                       return _._1._0;}
+                    break;}
+               _U.badCase($moduleName,
+               "on line 221, column 36 to 59");
+            }();
+            var state$ = function () {
+               switch (_.ctor)
+               {case "_Tuple2":
+                  switch (_._1.ctor)
+                    {case "_Tuple2":
+                       return _._1._1;}
+                    break;}
+               _U.badCase($moduleName,
+               "on line 221, column 36 to 59");
+            }();
+            return {ctor: "_Tuple2"
+                   ,_0: A2(loop,state$,auto$)
+                   ,_1: output};
+         }();
+      });
+   });
+   var combine = function (autos) {
+      return Step(function (a) {
+         return function () {
+            var $ = $List.unzip(A2($List.map,
+            step(a),
+            autos)),
+            autos$ = $._0,
+            bs = $._1;
+            return {ctor: "_Tuple2"
+                   ,_0: combine(autos$)
+                   ,_1: bs};
+         }();
+      });
+   };
+   var pure = function (f) {
+      return Step(function (x) {
+         return {ctor: "_Tuple2"
+                ,_0: pure(f)
+                ,_1: f(x)};
+      });
+   };
+   var merge = function (f) {
+      return pure($Basics.uncurry(f));
+   };
+   var state = F2(function (s,f) {
+      return Step(function (x) {
+         return function () {
+            var s$ = A2(f,x,s);
+            return {ctor: "_Tuple2"
+                   ,_0: A2(state,s$,f)
+                   ,_1: s$};
+         }();
+      });
+   });
+   var count = A2(state,
+   0,
+   F2(function (_v48,c) {
+      return function () {
+         return c + 1;
+      }();
+   }));
+   var hiddenState = F2(function (s,
+   f) {
+      return Step(function (x) {
+         return function () {
+            var $ = A2(f,x,s),
+            s$ = $._0,
+            out = $._1;
+            return {ctor: "_Tuple2"
+                   ,_0: A2(hiddenState,out,f)
+                   ,_1: s$};
+         }();
+      });
+   });
+   var average = function (k) {
+      return function () {
+         var stepFull = F2(function (n,
+         _v50) {
+            return function () {
+               switch (_v50.ctor)
+               {case "_Tuple3":
+                  return function () {
+                       var _v55 = dequeue(_v50._0);
+                       switch (_v55.ctor)
+                       {case "Just":
+                          switch (_v55._0.ctor)
+                            {case "_Tuple2":
+                               return function () {
+                                    var sum$ = _v50._2 + n - _v55._0._0;
+                                    return {ctor: "_Tuple2"
+                                           ,_0: sum$ / $Basics.toFloat(_v50._1)
+                                           ,_1: {ctor: "_Tuple3"
+                                                ,_0: A2(enqueue,n,_v55._0._1)
+                                                ,_1: _v50._1
+                                                ,_2: sum$}};
+                                 }();}
+                            break;
+                          case "Nothing":
+                          return {ctor: "_Tuple2"
+                                 ,_0: 0
+                                 ,_1: {ctor: "_Tuple3"
+                                      ,_0: _v50._0
+                                      ,_1: _v50._1
+                                      ,_2: _v50._2}};}
+                       _U.badCase($moduleName,
+                       "between lines 321 and 329");
+                    }();}
+               _U.badCase($moduleName,
+               "between lines 321 and 329");
+            }();
+         });
+         var step = F2(function (n,
+         _v59) {
+            return function () {
+               switch (_v59.ctor)
+               {case "_Tuple3":
+                  return _U.eq(_v59._1,
+                    k) ? A2(stepFull,
+                    n,
+                    {ctor: "_Tuple3"
+                    ,_0: _v59._0
+                    ,_1: _v59._1
+                    ,_2: _v59._2}) : {ctor: "_Tuple2"
+                                     ,_0: (_v59._2 + n) / ($Basics.toFloat(_v59._1) + 1)
+                                     ,_1: {ctor: "_Tuple3"
+                                          ,_0: A2(enqueue,n,_v59._0)
+                                          ,_1: _v59._1 + 1
+                                          ,_2: _v59._2 + n}};}
+               _U.badCase($moduleName,
+               "between lines 316 and 318");
+            }();
+         });
+         return A2(hiddenState,
+         {ctor: "_Tuple3"
+         ,_0: empty
+         ,_1: 0
+         ,_2: 0},
+         step);
+      }();
+   };
+   _elm.Automaton.values = {_op: _op
+                           ,pure: pure
+                           ,state: state
+                           ,hiddenState: hiddenState
+                           ,run: run
+                           ,step: step
+                           ,branch: branch
+                           ,pair: pair
+                           ,merge: merge
+                           ,first: first
+                           ,second: second
+                           ,combine: combine
+                           ,loop: loop
+                           ,count: count
+                           ,average: average};
+   return _elm.Automaton.values;
+};
 Elm.Basics = Elm.Basics || {};
 Elm.Basics.make = function (_elm) {
    "use strict";
@@ -1482,13 +1881,15 @@ Elm.Main.make = function (_elm) {
    _P = _N.Ports.make(_elm),
    $moduleName = "Main",
    $Basics = Elm.Basics.make(_elm),
+   $Color = Elm.Color.make(_elm),
    $Graphics$Element = Elm.Graphics.Element.make(_elm),
    $Keyboard = Elm.Keyboard.make(_elm),
    $Mouse = Elm.Mouse.make(_elm),
    $Signal = Elm.Signal.make(_elm),
    $Text = Elm.Text.make(_elm),
    $Time = Elm.Time.make(_elm),
-   $WebSocket = Elm.WebSocket.make(_elm);
+   $WebSocket = Elm.WebSocket.make(_elm),
+   $Window = Elm.Window.make(_elm);
    var networkOut = A2($Signal._op["<~"],
    $Basics.toString,
    $Mouse.position);
@@ -1496,32 +1897,57 @@ Elm.Main.make = function (_elm) {
    "ws://localhost:8080",
    networkOut);
    var delta = $Time.fps(30);
-   var render = function (gameState) {
-      return $Text.asText(gameState.netmsg);
-   };
-   var stepGame = F2(function (_v0,
+   var render = F2(function (_v0,
+   _v1) {
+      return function () {
+         return function () {
+            switch (_v0.ctor)
+            {case "_Tuple2":
+               return $Graphics$Element.color($Color.grey)(A3($Graphics$Element.container,
+                 _v0._0,
+                 _v0._1,
+                 $Graphics$Element.middle)($Text.plainText(_v1.netmsg)));}
+            _U.badCase($moduleName,
+            "on line 123, column 3 to 68");
+         }();
+      }();
+   });
+   var stepGame = F2(function (_v6,
    gameState) {
       return function () {
          return _U.replace([["netmsg"
-                            ,_v0.networkIn]],
+                            ,_v6.networkIn]],
          gameState);
       }();
    });
-   var defaultGame = {_: {}
-                     ,loaded: {_: {}}
-                     ,map: _L.fromArray([])
-                     ,netmsg: ""
-                     ,players: _L.fromArray([])};
-   var GameState = F4(function (a,
+   var GameState = F5(function (a,
    b,
    c,
-   d) {
+   d,
+   e) {
       return {_: {}
-             ,loaded: c
+             ,loaded: d
              ,map: a
-             ,netmsg: d
-             ,players: b};
+             ,netmsg: e
+             ,players: c
+             ,settings: b};
    });
+   var Settings = {_: {}};
+   var Map = F3(function (a,b,c) {
+      return {_: {}
+             ,id: a
+             ,name: b
+             ,tiles: c};
+   });
+   var defaultGame = {_: {}
+                     ,loaded: {_: {}}
+                     ,map: A3(Map,
+                     "",
+                     "",
+                     _L.fromArray([]))
+                     ,netmsg: ""
+                     ,players: _L.fromArray([])
+                     ,settings: {_: {}}};
    var LoadedResource = {_: {}};
    var Placeable = F5(function (a,
    b,
@@ -1568,14 +1994,18 @@ Elm.Main.make = function (_elm) {
    stepGame,
    defaultGame,
    input);
-   var main = A2($Signal._op["<~"],
+   var main = A2($Signal._op["~"],
+   A2($Signal._op["<~"],
    render,
+   $Window.dimensions),
    gameState);
    _elm.Main.values = {_op: _op
                       ,UserInput: UserInput
                       ,Input: Input
                       ,Placeable: Placeable
                       ,LoadedResource: LoadedResource
+                      ,Map: Map
+                      ,Settings: Settings
                       ,GameState: GameState
                       ,defaultGame: defaultGame
                       ,stepGame: stepGame
