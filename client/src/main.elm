@@ -1,5 +1,7 @@
 import Automaton
+import Automaton (Automaton)
 import Graphics.Element (..)
+import Graphics.Collage (collage, toForm)
 import Color(grey)
 import Keyboard
 import Mouse
@@ -10,15 +12,6 @@ import Time
 import WebSocket
 import Window
 
-{-- Part 1: Model the user input ----------------------------------------------
-
-What information do you need to represent all relevant user input?
-
-Task: Redefine `UserInput` to include all of the information you need.
-    Redefine `userInput` to be a signal that correctly models the user
-    input as described by `UserInput`.
-
-------------------------------------------------------------------------------}
 
 type alias UserInput = 
   { space  : Bool
@@ -31,26 +24,13 @@ type alias UserInput =
 type alias Input =
   { timeDelta : Float
   , userInput : UserInput
-  , networkIn : String
+  , netIn : NetMessage
   }
 
 
-
-{-- Part 2: Model the game ----------------------------------------------------
-
-What information do you need to represent the entire game?
-
-Tasks: Redefine `GameState` to represent your particular game.
-       Redefine `defaultGame` to represent your initial game state.
-
-For example, if you want to represent many objects that just have a position,
-your GameState might just be a list of coordinates and your default game might
-be an empty list (no objects at the start):
-
-    type GameState = { objects : [(Float,Float)] }
-    defaultGame = { objects = [] }
-
-------------------------------------------------------------------------------}
+type NetMessage
+  = DebugMsg String
+  | LoadResourceMsg (List String)
 
 type alias Placeable a = 
   { a |
@@ -81,7 +61,7 @@ type alias GameState =
   , settings : Settings
   , players  : List PlayerCharacter
   , loaded   : {} -- Dictionary of {resource id: loaded data}
-  , netmsg   : String
+  , debug    : String
   }
 
 defaultGame : GameState
@@ -90,45 +70,28 @@ defaultGame =
   , settings = {}
   , players  = []
   , loaded   = {}
-  , netmsg   = ""
+  , debug    = ""
   }
 
 
-
-{-- Part 3: Update the game ---------------------------------------------------
-
-How does the game step from one state to another based on user input?
-
-Task: redefine `stepGame` to use the UserInput and GameState
-      you defined in parts 1 and 2. Maybe use some helper functions
-      to break up the work, stepping smaller parts of the game.
-
-------------------------------------------------------------------------------}
+parseNetMessage : String -> NetMessage
+parseNetMessage = DebugMsg
 
 stepGame : Input -> GameState -> GameState
-stepGame {timeDelta, userInput, networkIn} gameState = {gameState | netmsg <- networkIn}
+stepGame {timeDelta, userInput, netIn} gameState =
+  let s = case netIn of 
+    DebugMsg msg              -> msg
+    LoadResourceMsg resources -> toString resources
+  in {gameState | debug <- s}
 
-
-
-{-- Part 4: Display the game --------------------------------------------------
-
-How should the GameState be displayed to the user?
-
-Task: redefine `display` to use the GameState you defined in part 2.
-
-------------------------------------------------------------------------------}
 
 render : (Int, Int) -> GameState -> Element
-render (winH, winW) { map, settings, players, loaded, netmsg} =
-  color grey <| container winH winW middle <| Text.plainText netmsg
+render (winH, winW) { map, settings, players, loaded, debug} =
+  color grey <|
+  container winH winW middle <|
+  collage winH winW
+  [toForm <| Text.plainText debug] 
 
-
-
-{-- That's all folks! ---------------------------------------------------------
-
-The following code puts it all together and shows it on screen.
-
-------------------------------------------------------------------------------}
 
 delta : Signal Float
 delta = Time.fps 30
@@ -138,8 +101,8 @@ networkOut : Signal String
 networkOut = toString <~ Mouse.position
 
 
-networkIn : Signal String
-networkIn = WebSocket.connect "ws://localhost:8080" networkOut
+networkIn : Signal NetMessage
+networkIn = parseNetMessage <~ WebSocket.connect "ws://localhost:8080" networkOut
 
 
 userInput : Signal UserInput
