@@ -2256,7 +2256,7 @@ Elm.Main.make = function (_elm) {
                  _v0._1,
                  _L.fromArray([$Graphics$Collage.toForm($Text.plainText(_v1.debug))]))));}
             _U.badCase($moduleName,
-            "between lines 90 and 93");
+            "between lines 89 and 92");
          }();
       }();
    });
@@ -2271,7 +2271,7 @@ Elm.Main.make = function (_elm) {
                   case "LoadResourceMsg":
                   return $Basics.toString(_v8._0);}
                _U.badCase($moduleName,
-               "between lines 82 and 85");
+               "between lines 81 and 84");
             }();
             return _U.replace([["debug",s]],
             gameState);
@@ -2328,9 +2328,9 @@ Elm.Main.make = function (_elm) {
       return {ctor: "DebugMsg"
              ,_0: a};
    };
-   var parseNetMessage = DebugMsg;
+   var parseNetInMessage = DebugMsg;
    var networkIn = A2($Signal._op["<~"],
-   parseNetMessage,
+   parseNetInMessage,
    A2($WebSocket.connect,
    "ws://localhost:8080",
    networkOut));
@@ -2382,7 +2382,7 @@ Elm.Main.make = function (_elm) {
                       ,Settings: Settings
                       ,GameState: GameState
                       ,defaultGame: defaultGame
-                      ,parseNetMessage: parseNetMessage
+                      ,parseNetInMessage: parseNetInMessage
                       ,stepGame: stepGame
                       ,render: render
                       ,delta: delta

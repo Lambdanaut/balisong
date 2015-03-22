@@ -24,11 +24,10 @@ type alias UserInput =
 type alias Input =
   { timeDelta : Float
   , userInput : UserInput
-  , netIn : NetMessage
+  , netIn : NetInMessage
   }
 
-
-type NetMessage
+type NetInMessage
   = DebugMsg String
   | LoadResourceMsg (List String)
 
@@ -74,8 +73,8 @@ defaultGame =
   }
 
 
-parseNetMessage : String -> NetMessage
-parseNetMessage = DebugMsg
+parseNetInMessage : String -> NetInMessage
+parseNetInMessage = DebugMsg
 
 stepGame : Input -> GameState -> GameState
 stepGame {timeDelta, userInput, netIn} gameState =
@@ -101,8 +100,8 @@ networkOut : Signal String
 networkOut = toString <~ Mouse.position
 
 
-networkIn : Signal NetMessage
-networkIn = parseNetMessage <~ WebSocket.connect "ws://localhost:8080" networkOut
+networkIn : Signal NetInMessage
+networkIn = parseNetInMessage <~ WebSocket.connect "ws://localhost:8080" networkOut
 
 
 userInput : Signal UserInput

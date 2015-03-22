@@ -5,7 +5,7 @@ module Server(
 import Control.Concurrent (MVar, newMVar, modifyMVar_, modifyMVar, readMVar)
 import Control.Monad (forever)
 import Control.Monad.IO.Class (liftIO)
-import Data.ByteString.Char8 as BS
+import qualified Data.ByteString.Char8 as BS
 import qualified Network.WebSockets as WS
 import qualified Network.WebSockets.Snap as WSSnap
 
@@ -13,11 +13,13 @@ import qualified BackendData
 import qualified Config
 import qualified Data
 
+
 talk :: WS.Connection -> MVar [Int] -> IO ()
 talk conn state = forever $ do
     msg <- WS.receive conn
     liftIO $ print msg
     WS.send conn msg
+
 
 application :: MVar [Int] -> WS.ServerApp
 application state pending = do
@@ -28,6 +30,7 @@ application state pending = do
     liftIO $ print msg
     WS.sendTextData conn $ BS.pack "This is a message from the server!"
     talk conn state
+
 
 runServer :: IO ()
 runServer = do
