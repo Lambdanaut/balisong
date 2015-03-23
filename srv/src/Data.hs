@@ -4,7 +4,7 @@ module Data(
     Game
 ,   Map
 ,   Block
-,   NetInMessage (..)
+,   NetMessage (..)
 ) where
 
 import qualified Config
@@ -15,13 +15,14 @@ import GHC.Generics
 
 
 {- Network Data -}
-data NetInMessage
-    = DebugMsg String
-    | Chat String
-    | Move
+data NetMessage
+    = NetDebug String
+    | NetChat String
+    | NetMove
     deriving (Show, Ord, Eq, Generic)
-instance JSON.FromJSON NetInMessage
-instance JSON.ToJSON NetInMessage
+instance JSON.FromJSON NetMessage
+instance JSON.ToJSON NetMessage
+
 
 {- Game Entity Data -}
 data Game = Game {
@@ -46,4 +47,4 @@ data Block = Block {
 -- For testing
 main :: IO ()
 main = do
-    putStrLn $ show $ JSON.encode $ DebugMsg "Testing one two three"
+    putStrLn $ show $ JSON.encode $ NetDebug "Testing one two three"
