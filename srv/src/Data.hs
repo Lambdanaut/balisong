@@ -17,6 +17,7 @@ import GHC.Generics
 {- Network Data -}
 data NetMessage
     = NetDebug String
+    | NetConn
     | NetChat String
     | NetMove
     deriving (Show, Ord, Eq, Generic)

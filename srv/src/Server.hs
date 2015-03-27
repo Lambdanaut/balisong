@@ -43,7 +43,8 @@ application state pending = do
     liftIO $ print "Connection!"
     msg <- WS.receive conn
     liftIO $ print msg
-    WS.sendTextData conn $ BSstrict.pack "This is a message from the server!"
+    let connMsg = JSON.encode $ Data.NetConn
+    WS.sendTextData conn connMsg
     talk conn state
 
 
