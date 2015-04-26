@@ -3168,6 +3168,74 @@ Elm.Graphics.Input.Field.make = function (_elm) {
                                       ,email: email};
    return _elm.Graphics.Input.Field.values;
 };
+Elm.Input = Elm.Input || {};
+Elm.Input.make = function (_elm) {
+   "use strict";
+   _elm.Input = _elm.Input || {};
+   if (_elm.Input.values)
+   return _elm.Input.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   _P = _N.Ports.make(_elm),
+   $moduleName = "Input",
+   $Basics = Elm.Basics.make(_elm),
+   $Graphics$Input$Field = Elm.Graphics.Input.Field.make(_elm),
+   $Keyboard = Elm.Keyboard.make(_elm),
+   $Network = Elm.Network.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $Time = Elm.Time.make(_elm);
+   var delta = $Time.fps(30);
+   var Input = F3(function (a,
+   b,
+   c) {
+      return {_: {}
+             ,netIn: c
+             ,timeDelta: a
+             ,userInput: b};
+   });
+   var UserInput = F4(function (a,
+   b,
+   c,
+   d) {
+      return {_: {}
+             ,action: a
+             ,arrows: c
+             ,enter: d
+             ,space: b};
+   });
+   var UIChatAction = function (a) {
+      return {ctor: "UIChatAction"
+             ,_0: a};
+   };
+   var chatChannel = $Signal.channel(UIChatAction($Graphics$Input$Field.noContent));
+   var userInput = A2($Signal._op["~"],
+   A2($Signal._op["~"],
+   A2($Signal._op["~"],
+   A2($Signal._op["<~"],
+   UserInput,
+   $Signal.subscribe(chatChannel)),
+   $Keyboard.space),
+   $Keyboard.wasd),
+   $Keyboard.enter);
+   var input = A2($Signal._op["~"],
+   A2($Signal._op["~"],
+   A2($Signal._op["<~"],
+   Input,
+   delta),
+   userInput),
+   $Network.networkIn);
+   _elm.Input.values = {_op: _op
+                       ,UIChatAction: UIChatAction
+                       ,UserInput: UserInput
+                       ,Input: Input
+                       ,chatChannel: chatChannel
+                       ,delta: delta
+                       ,userInput: userInput
+                       ,input: input};
+   return _elm.Input.values;
+};
 Elm.Json = Elm.Json || {};
 Elm.Json.Decode = Elm.Json.Decode || {};
 Elm.Json.Decode.make = function (_elm) {
@@ -3616,28 +3684,38 @@ Elm.Main.make = function (_elm) {
    $Graphics$Collage = Elm.Graphics.Collage.make(_elm),
    $Graphics$Element = Elm.Graphics.Element.make(_elm),
    $Graphics$Input$Field = Elm.Graphics.Input.Field.make(_elm),
-   $Keyboard = Elm.Keyboard.make(_elm),
+   $Input = Elm.Input.make(_elm),
    $Network = Elm.Network.make(_elm),
    $Signal = Elm.Signal.make(_elm),
    $Text = Elm.Text.make(_elm),
-   $Time = Elm.Time.make(_elm),
    $Window = Elm.Window.make(_elm);
-   var delta = $Time.fps(30);
+   var renderChatInput = function (content) {
+      return A4($Graphics$Input$Field.field,
+      $Graphics$Input$Field.defaultStyle,
+      function ($) {
+         return $Signal.send($Input.chatChannel)($Input.UIChatAction($));
+      },
+      "Chat",
+      content);
+   };
    var render = F2(function (_v0,
    _v1) {
       return function () {
          return function () {
             switch (_v0.ctor)
             {case "_Tuple2":
-               return $Graphics$Element.color($Color.grey)(A3($Graphics$Element.container,
-                 _v0._0,
-                 _v0._1,
-                 $Graphics$Element.middle)(A3($Graphics$Collage.collage,
-                 _v0._0,
-                 _v0._1,
-                 _L.fromArray([$Graphics$Collage.toForm($Text.plainText(_v1.debug))]))));}
+               return $Graphics$Element.color($Color.grey)(A2($Graphics$Element.flow,
+                 $Graphics$Element.down,
+                 _L.fromArray([renderChatInput(_v1.chatInput)
+                              ,A3($Graphics$Element.container,
+                              _v0._0,
+                              _v0._1,
+                              $Graphics$Element.middle)(A3($Graphics$Collage.collage,
+                              _v0._0,
+                              _v0._1,
+                              _L.fromArray([$Graphics$Collage.toForm($Text.plainText(_v1.debug))])))])));}
             _U.badCase($moduleName,
-            "between lines 115 and 120");
+            "between lines 91 and 99");
          }();
       }();
    });
@@ -3651,7 +3729,7 @@ Elm.Main.make = function (_elm) {
                {case "UIChatAction":
                   return _v8._0;}
                _U.badCase($moduleName,
-               "between lines 100 and 102");
+               "between lines 76 and 78");
             }();
             var net = function () {
                var _v10 = _v6.netIn;
@@ -3708,76 +3786,25 @@ Elm.Main.make = function (_elm) {
                      _L.fromArray([]))
                      ,players: _L.fromArray([])
                      ,settings: {_: {}}};
-   var Input = F3(function (a,
-   b,
-   c) {
-      return {_: {}
-             ,netIn: c
-             ,timeDelta: a
-             ,userInput: b};
-   });
-   var UserInput = F3(function (a,
-   b,
-   c) {
-      return {_: {}
-             ,action: a
-             ,arrows: c
-             ,space: b};
-   });
-   var UIChatAction = function (a) {
-      return {ctor: "UIChatAction"
-             ,_0: a};
-   };
-   var chatChannel = $Signal.channel(UIChatAction($Graphics$Input$Field.noContent));
-   var userInput = A2($Signal._op["~"],
-   A2($Signal._op["~"],
-   A2($Signal._op["<~"],
-   UserInput,
-   $Signal.subscribe(chatChannel)),
-   $Keyboard.space),
-   $Keyboard.wasd);
-   var input = A2($Signal._op["~"],
-   A2($Signal._op["~"],
-   A2($Signal._op["<~"],
-   Input,
-   delta),
-   userInput),
-   $Network.networkIn);
    var gameState = A3($Signal.foldp,
    stepGame,
    defaultGame,
-   input);
+   $Input.input);
    var main = A2($Signal._op["~"],
    A2($Signal._op["<~"],
    render,
    $Window.dimensions),
    gameState);
-   var renderChatInput = function (content) {
-      return A4($Graphics$Input$Field.field,
-      $Graphics$Input$Field.defaultStyle,
-      function ($) {
-         return $Signal.send(chatChannel)(UIChatAction($));
-      },
-      "Chat",
-      content);
-   };
    _elm.Main.values = {_op: _op
-                      ,UIChatAction: UIChatAction
-                      ,UserInput: UserInput
-                      ,Input: Input
                       ,Map: Map
                       ,Placeable: Placeable
                       ,LoadedResource: LoadedResource
                       ,Settings: Settings
                       ,UI: UI
                       ,defaultGame: defaultGame
-                      ,chatChannel: chatChannel
                       ,stepGame: stepGame
                       ,renderChatInput: renderChatInput
                       ,render: render
-                      ,delta: delta
-                      ,userInput: userInput
-                      ,input: input
                       ,gameState: gameState
                       ,main: main};
    return _elm.Main.values;

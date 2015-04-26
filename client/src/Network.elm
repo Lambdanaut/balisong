@@ -6,7 +6,6 @@ import Mouse
 import Signal (Signal, (<~), (~))
 import WebSocket
 
-
 type NetMessage
   = NetDebug String
   | NetConn

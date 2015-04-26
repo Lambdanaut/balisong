@@ -6,33 +6,13 @@ import Color(grey)
 import Graphics.Collage (collage, toForm)
 import Graphics.Element (..)
 import Graphics.Input.Field as Field
-import Keyboard
 import Signal
 import Signal (Signal, (<~), (~))
 import Text
-import Time
 import Window
 
+import Input (input, Input, UIAction(..), chatChannel)
 import Network (NetMessage(..), networkIn)
-
-
-type UIAction 
-  = UIChatAction Field.Content
-
-type alias UserInput = 
-  { action : UIAction
-  , space  : Bool
-  , arrows : 
-    { x : Int
-    , y : Int
-    }
-  }
-
-type alias Input =
-  { timeDelta : Float
-  , userInput : UserInput
-  , netIn : NetMessage
-  }
 
 type alias Map = 
   { id    : String
@@ -79,13 +59,8 @@ defaultGame =
   , players  = []
   , loaded   = {}
   , debug    = ""
-
   , chatInput = Field.noContent
   }
-
-
-chatChannel : Signal.Channel UIAction
-chatChannel = Signal.channel <| UIChatAction Field.noContent
 
 
 stepGame : Input -> GameState -> GameState
@@ -99,7 +74,7 @@ stepGame {timeDelta, userInput, netIn} gameState =
         otherwise                 -> "nope"
       chatInput = case userInput.action of
         UIChatAction msg -> msg
-  in 
+  in
     { gameState
     | debug <- net
     , chatInput <- chatInput
@@ -111,30 +86,16 @@ renderChatInput content = Field.field Field.defaultStyle (Signal.send chatChanne
 
 
 render : (Int, Int) -> GameState -> Element
-render (winH, winW) { map, settings, players, loaded, debug, chatInput} =
+render (winH, winW) {map, settings, players, loaded, debug, chatInput} =
   color grey <|
-  container winH winW middle <|
-  collage winH winW
-  [toForm <| Text.plainText debug
-  --,toForm <| renderChatInput chatInput
-  ] 
-
-
-delta : Signal Float
-delta = Time.fps 30
-
-
-userInput : Signal UserInput
-userInput =
-  UserInput
-  <~ Signal.subscribe chatChannel
-  ~  Keyboard.space
-  ~  Keyboard.wasd
-
-
-input : Signal Input
-input = Input <~ delta ~ userInput ~ networkIn
-
+  flow down
+  [ renderChatInput chatInput
+  , container winH winW middle <|
+    collage winH winW
+    [ toForm <| Text.plainText debug
+    
+    ] 
+  ]
 
 gameState : Signal GameState
 gameState = Signal.foldp stepGame defaultGame input
