@@ -3184,17 +3184,11 @@ Elm.Input.make = function (_elm) {
    $Graphics$Input$Field = Elm.Graphics.Input.Field.make(_elm),
    $Json$Decode = Elm.Json.Decode.make(_elm),
    $Keyboard = Elm.Keyboard.make(_elm),
-   $Mouse = Elm.Mouse.make(_elm),
    $Result = Elm.Result.make(_elm),
    $Signal = Elm.Signal.make(_elm),
    $Time = Elm.Time.make(_elm),
    $WebSocket = Elm.WebSocket.make(_elm);
    var delta = $Time.fps(30);
-   var networkOut = A2($Signal._op["<~"],
-   function (x) {
-      return $Basics.toString(x);
-   },
-   $Mouse.position);
    var chatChannel = $Signal.channel($Graphics$Input$Field.noContent);
    var Input = F3(function (a,
    b,
@@ -3268,14 +3262,9 @@ Elm.Input.make = function (_elm) {
               _v1._0));
             case "Ok": return _v1._0;}
          _U.badCase($moduleName,
-         "between lines 61 and 63");
+         "between lines 62 and 64");
       }();
    };
-   var networkIn = A2($Signal._op["<~"],
-   parseNetMessage,
-   A2($WebSocket.connect,
-   "ws://localhost:8080",
-   networkOut));
    var UIChatOutAction = function (a) {
       return {ctor: "UIChatOutAction"
              ,_0: a};
@@ -3287,6 +3276,24 @@ Elm.Input.make = function (_elm) {
       return UIChatOutAction(field.string);
    },
    $Signal.subscribe(chatChannel)));
+   var networkOut = function () {
+      var chatString = function (chatOut) {
+         return function () {
+            switch (chatOut.ctor)
+            {case "UIChatOutAction":
+               return chatOut._0;}
+            return "";
+         }();
+      };
+      return A2($Signal._op["<~"],
+      chatString,
+      chatOut);
+   }();
+   var networkIn = A2($Signal._op["<~"],
+   parseNetMessage,
+   A2($WebSocket.connect,
+   "ws://localhost:8080",
+   networkOut));
    var UIChatAction = function (a) {
       return {ctor: "UIChatAction"
              ,_0: a};

@@ -43,7 +43,8 @@ chatChannel = Signal.channel Field.noContent
 
 
 chatOut : Signal UIAction
-chatOut = Signal.sampleOn (Keyboard.enter) ((\field -> UIChatOutAction (field.string)) <~ Signal.subscribe chatChannel)
+chatOut = Signal.sampleOn Keyboard.enter
+  ((\field -> UIChatOutAction (field.string)) <~ Signal.subscribe chatChannel)
 
 
 {- Network -}
@@ -64,7 +65,12 @@ parseNetMessage jsonText = case decodeString netMessageDecoder jsonText of
 
 
 networkOut : Signal String
-networkOut = (\ x -> toString x) <~ Mouse.position
+networkOut = 
+  let chatString chatOut = case chatOut of 
+    UIChatOutAction str -> str
+    otherwise -> ""
+  in
+    chatString <~ chatOut
 
 
 networkIn : Signal NetMessage
