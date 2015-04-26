@@ -3182,11 +3182,20 @@ Elm.Input.make = function (_elm) {
    $moduleName = "Input",
    $Basics = Elm.Basics.make(_elm),
    $Graphics$Input$Field = Elm.Graphics.Input.Field.make(_elm),
+   $Json$Decode = Elm.Json.Decode.make(_elm),
    $Keyboard = Elm.Keyboard.make(_elm),
-   $Network = Elm.Network.make(_elm),
+   $Mouse = Elm.Mouse.make(_elm),
+   $Result = Elm.Result.make(_elm),
    $Signal = Elm.Signal.make(_elm),
-   $Time = Elm.Time.make(_elm);
+   $Time = Elm.Time.make(_elm),
+   $WebSocket = Elm.WebSocket.make(_elm);
    var delta = $Time.fps(30);
+   var networkOut = A2($Signal._op["<~"],
+   function (x) {
+      return $Basics.toString(x);
+   },
+   $Mouse.position);
+   var chatChannel = $Signal.channel($Graphics$Input$Field.noContent);
    var Input = F3(function (a,
    b,
    c) {
@@ -3205,17 +3214,93 @@ Elm.Input.make = function (_elm) {
              ,enter: d
              ,space: b};
    });
+   var NetLoadResource = function (a) {
+      return {ctor: "NetLoadResource"
+             ,_0: a};
+   };
+   var NetMove = {ctor: "NetMove"};
+   var NetChat = function (a) {
+      return {ctor: "NetChat"
+             ,_0: a};
+   };
+   var NetConn = {ctor: "NetConn"};
+   var NetDebug = function (a) {
+      return {ctor: "NetDebug"
+             ,_0: a};
+   };
+   var netMessageDecoder = A2($Json$Decode.andThen,
+   A2($Json$Decode._op[":="],
+   "tag",
+   $Json$Decode.string),
+   function (tag) {
+      return function () {
+         switch (tag)
+         {case "NetChat":
+            return A2($Json$Decode.object1,
+              NetChat,
+              A2($Json$Decode._op[":="],
+              "contents",
+              $Json$Decode.string));
+            case "NetConn":
+            return $Json$Decode.succeed(NetConn);
+            case "NetDebug":
+            return A2($Json$Decode.object1,
+              NetDebug,
+              A2($Json$Decode._op[":="],
+              "contents",
+              $Json$Decode.string));
+            case "NetMove":
+            return $Json$Decode.succeed(NetMove);}
+         return $Json$Decode.fail(A2($Basics._op["++"],
+         tag,
+         " is not a valid tag"));
+      }();
+   });
+   var parseNetMessage = function (jsonText) {
+      return function () {
+         var _v1 = A2($Json$Decode.decodeString,
+         netMessageDecoder,
+         jsonText);
+         switch (_v1.ctor)
+         {case "Err":
+            return NetDebug(A2($Basics._op["++"],
+              "Failure to parseNetMessage: ",
+              _v1._0));
+            case "Ok": return _v1._0;}
+         _U.badCase($moduleName,
+         "between lines 61 and 63");
+      }();
+   };
+   var networkIn = A2($Signal._op["<~"],
+   parseNetMessage,
+   A2($WebSocket.connect,
+   "ws://localhost:8080",
+   networkOut));
+   var UIChatOutAction = function (a) {
+      return {ctor: "UIChatOutAction"
+             ,_0: a};
+   };
+   var chatOut = A2($Signal.sampleOn,
+   $Keyboard.enter,
+   A2($Signal._op["<~"],
+   function (field) {
+      return UIChatOutAction(field.string);
+   },
+   $Signal.subscribe(chatChannel)));
    var UIChatAction = function (a) {
       return {ctor: "UIChatAction"
              ,_0: a};
    };
-   var chatChannel = $Signal.channel(UIChatAction($Graphics$Input$Field.noContent));
+   var uiaction = $Signal.mergeMany(_L.fromArray([chatOut
+                                                 ,A2($Signal._op["<~"],
+                                                 UIChatAction,
+                                                 $Signal.subscribe(chatChannel))]));
    var userInput = A2($Signal._op["~"],
    A2($Signal._op["~"],
    A2($Signal._op["~"],
    A2($Signal._op["<~"],
    UserInput,
-   $Signal.subscribe(chatChannel)),
+   uiaction),
    $Keyboard.space),
    $Keyboard.wasd),
    $Keyboard.enter);
@@ -3225,13 +3310,25 @@ Elm.Input.make = function (_elm) {
    Input,
    delta),
    userInput),
-   $Network.networkIn);
+   networkIn);
    _elm.Input.values = {_op: _op
                        ,UIChatAction: UIChatAction
+                       ,UIChatOutAction: UIChatOutAction
+                       ,NetDebug: NetDebug
+                       ,NetConn: NetConn
+                       ,NetChat: NetChat
+                       ,NetMove: NetMove
+                       ,NetLoadResource: NetLoadResource
                        ,UserInput: UserInput
                        ,Input: Input
                        ,chatChannel: chatChannel
+                       ,chatOut: chatOut
+                       ,netMessageDecoder: netMessageDecoder
+                       ,parseNetMessage: parseNetMessage
+                       ,networkOut: networkOut
+                       ,networkIn: networkIn
                        ,delta: delta
+                       ,uiaction: uiaction
                        ,userInput: userInput
                        ,input: input};
    return _elm.Input.values;
@@ -3685,16 +3782,13 @@ Elm.Main.make = function (_elm) {
    $Graphics$Element = Elm.Graphics.Element.make(_elm),
    $Graphics$Input$Field = Elm.Graphics.Input.Field.make(_elm),
    $Input = Elm.Input.make(_elm),
-   $Network = Elm.Network.make(_elm),
    $Signal = Elm.Signal.make(_elm),
    $Text = Elm.Text.make(_elm),
    $Window = Elm.Window.make(_elm);
    var renderChatInput = function (content) {
       return A4($Graphics$Input$Field.field,
       $Graphics$Input$Field.defaultStyle,
-      function ($) {
-         return $Signal.send($Input.chatChannel)($Input.UIChatAction($));
-      },
+      $Signal.send($Input.chatChannel),
       "Chat",
       content);
    };
@@ -3715,7 +3809,7 @@ Elm.Main.make = function (_elm) {
                               _v0._1,
                               _L.fromArray([$Graphics$Collage.toForm($Text.plainText(_v1.debug))])))])));}
             _U.badCase($moduleName,
-            "between lines 91 and 99");
+            "between lines 90 and 98");
          }();
       }();
    });
@@ -3728,8 +3822,7 @@ Elm.Main.make = function (_elm) {
                switch (_v8.ctor)
                {case "UIChatAction":
                   return _v8._0;}
-               _U.badCase($moduleName,
-               "between lines 76 and 78");
+               return $Graphics$Input$Field.noContent;
             }();
             var net = function () {
                var _v10 = _v6.netIn;
@@ -9299,103 +9392,6 @@ Elm.Native.Window.make = function(localRuntime) {
 
 };
 
-Elm.Network = Elm.Network || {};
-Elm.Network.make = function (_elm) {
-   "use strict";
-   _elm.Network = _elm.Network || {};
-   if (_elm.Network.values)
-   return _elm.Network.values;
-   var _op = {},
-   _N = Elm.Native,
-   _U = _N.Utils.make(_elm),
-   _L = _N.List.make(_elm),
-   _P = _N.Ports.make(_elm),
-   $moduleName = "Network",
-   $Basics = Elm.Basics.make(_elm),
-   $Json$Decode = Elm.Json.Decode.make(_elm),
-   $Mouse = Elm.Mouse.make(_elm),
-   $Result = Elm.Result.make(_elm),
-   $Signal = Elm.Signal.make(_elm),
-   $WebSocket = Elm.WebSocket.make(_elm);
-   var networkOut = A2($Signal._op["<~"],
-   function (x) {
-      return $Basics.toString(x);
-   },
-   $Mouse.position);
-   var NetLoadResource = function (a) {
-      return {ctor: "NetLoadResource"
-             ,_0: a};
-   };
-   var NetMove = {ctor: "NetMove"};
-   var NetChat = function (a) {
-      return {ctor: "NetChat"
-             ,_0: a};
-   };
-   var NetConn = {ctor: "NetConn"};
-   var NetDebug = function (a) {
-      return {ctor: "NetDebug"
-             ,_0: a};
-   };
-   var netMessageDecoder = A2($Json$Decode.andThen,
-   A2($Json$Decode._op[":="],
-   "tag",
-   $Json$Decode.string),
-   function (tag) {
-      return function () {
-         switch (tag)
-         {case "NetChat":
-            return A2($Json$Decode.object1,
-              NetChat,
-              A2($Json$Decode._op[":="],
-              "contents",
-              $Json$Decode.string));
-            case "NetConn":
-            return $Json$Decode.succeed(NetConn);
-            case "NetDebug":
-            return A2($Json$Decode.object1,
-              NetDebug,
-              A2($Json$Decode._op[":="],
-              "contents",
-              $Json$Decode.string));
-            case "NetMove":
-            return $Json$Decode.succeed(NetMove);}
-         return $Json$Decode.fail(A2($Basics._op["++"],
-         tag,
-         " is not a valid tag"));
-      }();
-   });
-   var parseNetMessage = function (jsonText) {
-      return function () {
-         var _v1 = A2($Json$Decode.decodeString,
-         netMessageDecoder,
-         jsonText);
-         switch (_v1.ctor)
-         {case "Err":
-            return NetDebug(A2($Basics._op["++"],
-              "Failure to parseNetMessage: ",
-              _v1._0));
-            case "Ok": return _v1._0;}
-         _U.badCase($moduleName,
-         "between lines 29 and 31");
-      }();
-   };
-   var networkIn = A2($Signal._op["<~"],
-   parseNetMessage,
-   A2($WebSocket.connect,
-   "ws://localhost:8080",
-   networkOut));
-   _elm.Network.values = {_op: _op
-                         ,NetDebug: NetDebug
-                         ,NetConn: NetConn
-                         ,NetChat: NetChat
-                         ,NetMove: NetMove
-                         ,NetLoadResource: NetLoadResource
-                         ,netMessageDecoder: netMessageDecoder
-                         ,parseNetMessage: parseNetMessage
-                         ,networkOut: networkOut
-                         ,networkIn: networkIn};
-   return _elm.Network.values;
-};
 Elm.Result = Elm.Result || {};
 Elm.Result.make = function (_elm) {
    "use strict";

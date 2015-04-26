@@ -11,8 +11,7 @@ import Signal (Signal, (<~), (~))
 import Text
 import Window
 
-import Input (input, Input, UIAction(..), chatChannel)
-import Network (NetMessage(..), networkIn)
+import Input (input, Input, UIAction(..), chatChannel, NetMessage(..))
 
 type alias Map = 
   { id    : String
@@ -74,6 +73,7 @@ stepGame {timeDelta, userInput, netIn} gameState =
         otherwise                 -> "nope"
       chatInput = case userInput.action of
         UIChatAction msg -> msg
+        otherwise -> Field.noContent
   in
     { gameState
     | debug <- net
@@ -82,7 +82,7 @@ stepGame {timeDelta, userInput, netIn} gameState =
 
 
 renderChatInput : Field.Content -> Element
-renderChatInput content = Field.field Field.defaultStyle (Signal.send chatChannel << UIChatAction) "Chat" content
+renderChatInput content = Field.field Field.defaultStyle (Signal.send chatChannel) "Chat" content
 
 
 render : (Int, Int) -> GameState -> Element
